@@ -28,12 +28,9 @@ app.get("/mpesa", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
-// Only start listener in local environment
-if (process.env.NODE_ENV !== "production") {
-    app.listen(PORT, () => {
-        console.log(`🚀 Server running on port ${PORT}`);
-    });
-}
+// Always run app.listen so Render detects the open port
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+});
 
-// Export module for Vercel Serverless Functions
 module.exports = app;
