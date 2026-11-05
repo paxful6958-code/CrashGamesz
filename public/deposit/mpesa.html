@@ -368,6 +368,90 @@
             border: 1px solid rgba(239, 68, 68, 0.5);
             color: var(--error-red);
         }
+        /* --- SUCCESS SCREEN --- */
+        
+        .success-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+            padding: 10px 0;
+        }
+        
+        .success-screen.show {
+            display: flex;
+        }
+        
+        .success-check {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.15);
+            border: 2px solid var(--accent-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pop 0.4s ease;
+        }
+        
+        .success-check svg {
+            width: 36px;
+            height: 36px;
+            stroke: var(--accent-green);
+        }
+        
+        @keyframes pop {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .success-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--accent-green);
+        }
+        
+        .success-amount {
+            font-size: 26px;
+            font-weight: 800;
+            color: #fff;
+        }
+        
+        .success-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        
+        .success-btn {
+            width: 100%;
+            margin-top: 10px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 14px;
+            font-weight: 800;
+            color: #06121a;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        
+        .success-note {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
         
         .support-banner {
             background: rgba(19, 25, 36, 0.7);
@@ -485,31 +569,50 @@
                 <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
             </div>
 
-            <label class="form-label" for="phoneInput">M-Pesa Phone Number</label>
-            <div class="phone-input-wrapper">
-                <span class="phone-prefix">+254</span>
-                <input type="tel" id="phoneInput" inputmode="numeric" maxlength="10" placeholder="712345678" autocomplete="tel">
+            <!-- DEPOSIT FORM VIEW -->
+            <div id="depositFormView">
+                <label class="form-label" for="phoneInput">M-Pesa Phone Number</label>
+                <div class="phone-input-wrapper">
+                    <span class="phone-prefix">+254</span>
+                    <input type="tel" id="phoneInput" inputmode="numeric" maxlength="10" placeholder="712345678" autocomplete="tel">
+                </div>
+                <p class="form-hint">Enter your Safaricom number, e.g. 712345678 or 0112345678.</p>
+
+                <div class="selected-amount-display">
+                    <span class="label">Selected Amount</span>
+                    <span class="value" id="selectedAmount">--</span>
+                </div>
+
+                <button id="payBtn" disabled>Deposit Now</button>
+
+                <div class="status-box" id="statusBox"></div>
             </div>
-            <p class="form-hint">Enter your Safaricom number, e.g. 712345678 or 0112345678.</p>
 
-            <div class="selected-amount-display">
-                <span class="label">Selected Amount</span>
-                <span class="value" id="selectedAmount">--</span>
+            <!-- SUCCESS VIEW -->
+            <div class="success-screen" id="successView">
+                <div class="success-check">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <div class="success-title">Payment Successful</div>
+                <div class="success-amount" id="successAmount">KES 0</div>
+                <div class="success-sub" id="successSub">
+                    Your deposit has been confirmed and credited to your account balance.
+                </div>
+                <button class="success-btn" id="goDashboardBtn">Return to Dashboard</button>
+                <div class="success-note">Redirecting automatically in a few seconds...</div>
             </div>
-
-            <button id="payBtn" disabled>Deposit Now</button>
-
-            <div class="status-box" id="statusBox"></div>
         </div>
     </div>
 
     <script>
-        const AMOUNTS = [500, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000];
+        const AMOUNTS = [200, 350, 500, 1000, 1500, 1750, 2000, 2250, 2500, 2750, 3000];
         const MPESA_LOGO = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSK9btJTu-287FCOeK5xFZVt1cnFQnnBpQhG6pPrIry4Q&s=10";
         const KES_PER_USD = 129; // must match the game page rate
 
-        /* ---- where to send the user after success (auto-detected fallback) ---- */
-        const GAME_URL = "/aviator";
+        /* ---- where to send the user after success ---- */
+        const DASHBOARD_URL = "/dashboard/index.html";
 
         const grid = document.getElementById("amountsGrid");
         const modalOverlay = document.getElementById("modalOverlay");
@@ -518,9 +621,15 @@
         const selectedAmountEl = document.getElementById("selectedAmount");
         const payBtn = document.getElementById("payBtn");
         const statusBox = document.getElementById("statusBox");
+        const depositFormView = document.getElementById("depositFormView");
+        const successView = document.getElementById("successView");
+        const successAmountEl = document.getElementById("successAmount");
+        const successSubEl = document.getElementById("successSub");
+        const goDashboardBtn = document.getElementById("goDashboardBtn");
 
         let selectedAmount = null;
         let pollTimer = null;
+        let redirectTimer = null;
 
         /* ---- shared user key (same identity as the game page) ---- */
         function getUserKey() {
@@ -562,20 +671,52 @@
                 clearInterval(pollTimer);
                 pollTimer = null;
             }
+            if (redirectTimer) {
+                clearTimeout(redirectTimer);
+                redirectTimer = null;
+            }
             modalOverlay.classList.remove("open");
             document.body.style.overflow = "";
+            // reset views for next time
+            depositFormView.style.display = "block";
+            successView.classList.remove("show");
             statusBox.className = "status-box";
             phoneInput.value = "";
             payBtn.disabled = true;
             selectedAmount = null;
         }
 
+        function showSuccess() {
+            if (pollTimer) {
+                clearInterval(pollTimer);
+                pollTimer = null;
+            }
+            depositFormView.style.display = "none";
+            successView.classList.add("show");
+            successAmountEl.textContent = "KES " + selectedAmount.toLocaleString();
+            successSubEl.textContent = selectedAmount.toLocaleString() +
+                " KES has been confirmed and credited to your account balance.";
+            // auto-redirect to dashboard
+            redirectTimer = setTimeout(() => {
+                window.location.href = DASHBOARD_URL;
+            }, 5000);
+        }
+
+        goDashboardBtn.addEventListener("click", () => {
+            if (redirectTimer) {
+                clearTimeout(redirectTimer);
+                redirectTimer = null;
+            }
+            window.location.href = DASHBOARD_URL;
+        });
+
         modalClose.addEventListener("click", closeModal);
         modalOverlay.addEventListener("click", (e) => {
-            if (e.target === modalOverlay) closeModal();
+            if (e.target === modalOverlay && !successView.classList.contains("show")) closeModal();
         });
         document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape" && modalOverlay.classList.contains("open")) closeModal();
+            if (e.key === "Escape" && modalOverlay.classList.contains("open") &&
+                !successView.classList.contains("show")) closeModal();
         });
 
         phoneInput.addEventListener("input", () => {
@@ -634,7 +775,7 @@
                 const reference = data.data.reference;
                 showStatus("loading", "STK push sent! Complete the payment on your phone. Waiting for confirmation...");
 
-                /* ---- POLL until PayHero callback credits the balance ---- */
+                /* ---- POLL server status (server reconciles with PayHero directly) ---- */
                 let attempts = 0;
                 pollTimer = setInterval(async() => {
                     attempts++;
@@ -643,31 +784,22 @@
                         const s = await r.json();
 
                         if (s.status === "completed") {
-                            clearInterval(pollTimer);
-                            pollTimer = null;
+                            // cache the authoritative server balance for the game page
+                            try {
+                                const balRes = await fetch(`/api/payhero/balance?key=${encodeURIComponent(getUserKey())}`);
+                                const bal = await balRes.json();
+                                if (bal.success) {
+                                    localStorage.setItem('betrush_real_balance_v2', (Number(bal.balance) / KES_PER_USD).toFixed(2));
+                                }
+                            } catch (e) { /* non-fatal */ }
 
-                            // pull authoritative server balance and cache it for the game
-                            const balRes = await fetch(`/api/payhero/balance?key=${encodeURIComponent(getUserKey())}`);
-                            const bal = await balRes.json();
-
-                            if (bal.success) {
-                                const usdEquivalent = Number(bal.balance) / KES_PER_USD;
-                                localStorage.setItem('betrush_real_balance_v2', usdEquivalent.toFixed(2));
-                            }
-
-                            showStatus("success",
-                                "✅ Payment confirmed! KES " + selectedAmount.toLocaleString() +
-                                " has been added to your balance. Returning to the game...");
-
-                            setTimeout(() => {
-                                window.location.href = GAME_URL;
-                            }, 2500);
+                            showSuccess();
                         } else if (s.status === "failed") {
                             clearInterval(pollTimer);
                             pollTimer = null;
                             showStatus("error", "Payment failed or was cancelled. Please try again.");
                             payBtn.disabled = false;
-                        } else if (attempts > 30) {
+                        } else if (attempts > 45) {
                             clearInterval(pollTimer);
                             pollTimer = null;
                             showStatus("error", "Confirmation timed out. If you completed the payment, your balance will update automatically within a few minutes.");
@@ -676,7 +808,7 @@
                     } catch (e) {
                         /* keep polling on transient network errors */
                     }
-                }, 4000);
+                }, 3000);
             } catch (err) {
                 showStatus("error", "Network error. Please check your connection and try again.");
                 payBtn.disabled = false;
