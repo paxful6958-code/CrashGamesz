@@ -1,12 +1,11 @@
 const { createClient } = require("@libsql/client");
 
-// Connects to Turso cloud in production, or falls back to local file for testing
+// Connects to local file for development or cloud database if configured
 const db = createClient({
     url: process.env.DATABASE_URL || "file:data.db",
     authToken: process.env.DATABASE_AUTH_TOKEN,
 });
 
-// Initialize tables asynchronously
 async function initDb() {
     await db.execute(`
     CREATE TABLE IF NOT EXISTS users (
