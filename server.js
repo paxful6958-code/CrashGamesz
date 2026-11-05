@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files
+// Serve static files from public directory
 app.use(express.static(path.join(__dirname, "public")));
 
 const payheroRoutes = require("./routes/payhero");
@@ -28,6 +28,12 @@ app.get("/mpesa", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-});
+// Only start listener in local environment
+if (process.env.NODE_ENV !== "production") {
+    app.listen(PORT, () => {
+        console.log(`🚀 Server running on port ${PORT}`);
+    });
+}
+
+// Export module for Vercel Serverless Functions
+module.exports = app;
