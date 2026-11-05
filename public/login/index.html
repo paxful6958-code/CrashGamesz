@@ -1,0 +1,368 @@
+<!-- Mirrored from betrush.site/login/ by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 03 Oct 2026 14:59:16 GMT -->
+<meta name='viewport' content='width=device-width, initial-scale=1' />
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CrashGame -- Account Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Outfit:wght@600;800;900&amp;display=swap" rel="stylesheet">
+    <style>
+         :root {
+            --bg-base: #0b0e14;
+            --bg-surface: #131924;
+            --bg-card: #1a2232;
+            --bg-input: #0e131d;
+            --accent-cyan: #00f2fe;
+            --accent-blue: #4facfe;
+            --accent-green: #10b981;
+            --accent-glow: rgba(0, 242, 254, 0.35);
+            --text-main: #f8fafc;
+            --text-muted: #8492a6;
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(0, 242, 254, 0.5);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            touch-action: manipulation;
+        }
+        
+        html,
+        body {
+            touch-action: pan-x pan-y;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+        }
+        
+        .main-wrapper {
+            flex: 1;
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .brand-logo-hero {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+        
+        .brand-logo-hero img {
+            height: 32px;
+            width: auto;
+            filter: drop-shadow(0 0 8px var(--accent-glow));
+        }
+        
+        .bonus-card {
+            width: 100%;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, rgba(26, 34, 50, 0.95), rgba(19, 25, 36, 0.98));
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            border-radius: 12px;
+            padding: 14px 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bonus-title {
+            font-size: 15px;
+            font-weight: 900;
+            color: var(--accent-cyan);
+            font-family: 'Outfit', sans-serif;
+            margin-bottom: 4px;
+        }
+        
+        .bonus-desc {
+            font-size: 12px;
+            color: #f1f5f9;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        
+        .form-card {
+            width: 100%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 20px 18px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .form-header {
+            margin-bottom: 14px;
+        }
+        
+        .form-title {
+            font-size: 18px;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .form-subtitle {
+            color: var(--text-muted);
+            font-size: 11px;
+            margin-top: 2px;
+        }
+        
+        .input-group {
+            margin-bottom: 12px;
+            position: relative;
+        }
+        
+        .input-group label {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        
+        .input-control {
+            width: 100%;
+            height: 38px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            padding: 0 10px;
+            color: #fff;
+            font-size: 12px;
+            outline: none;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+        
+        .input-control:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        
+        .checkbox-group input {
+            accent-color: var(--accent-cyan);
+            width: 14px;
+            height: 14px;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            height: 42px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border: none;
+            border-radius: 8px;
+            color: #050811;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px var(--accent-glow);
+            transition: transform 0.2s, filter 0.2s;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.1);
+        }
+        
+        .page-footer {
+            width: 100%;
+            text-align: center;
+            padding: 16px;
+            font-size: 11px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-glass);
+            background: var(--bg-base);
+            margin-top: auto;
+        }
+        
+        #toast-container {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border-active);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            font-size: 12px;
+            animation: fadeIn 0.3s forwards;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-wrapper">
+        <div class="brand-logo-hero">
+            <img src="../../i.ibb.co/5WS8kMsY/4-F05-AFF4-AFC8-4-B60-9-F59-086-D08-FA8723.png" alt="CrashGame"> CrashGame
+        </div>
+
+        <div class="bonus-card">
+            <div class="bonus-title">🎁 100% FREE AVIATOR SIGNALS 🎁</div>
+            <div class="bonus-desc">
+                🎰 Play Aviator 🚀 Get free accurate signals 🎯
+            </div>
+        </div>
+
+        <div class="form-card">
+            <div class="form-header">
+                <h2 class="form-title">👤 LOG IN</h2>
+                <p class="form-subtitle">Enter User ID and password to log in</p>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <label>🫆 User ID</label>
+                    <input type="text" id="accountID" class="input-control" required placeholder="e.g. User_582910">
+                </div>
+
+                <div class="input-group">
+                    <label>🔐 Password</label>
+                    <input type="password" id="password" class="input-control" required placeholder="Enter your password">
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="remember" checked>
+                    <label for="remember">Remember User ID on this device</label>
+                </div>
+
+                <button type="submit" class="btn-submit">LOG IN</button>
+            </form>
+
+            <div style="text-align: center; font-size: 12px; margin-top: 14px; color: var(--text-muted);">
+                Don't have an ID? <a href="register/index.html" style="color: var(--accent-cyan); font-weight: 700; text-decoration: none;">Register Now</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="page-footer">
+        &copy; 2026 CrashGame. All rights reserved.
+    </footer>
+
+    <div id="toast-container"></div>
+
+    <script>
+        document.addEventListener('touchend', (function() {
+            let lastTouch = 0;
+            return function(e) {
+                const now = Date.now();
+                if (now - lastTouch <= 300) {
+                    e.preventDefault();
+                }
+                lastTouch = now;
+            };
+        })(), false);
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const localData = localStorage.getItem('betrush_user');
+            if (localData) {
+                try {
+                    const parsed = JSON.parse(localData);
+                    if (parsed.accountID) {
+                        document.getElementById('accountID').value = parsed.accountID;
+                    }
+                } catch (err) {}
+            }
+        });
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerText = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const accountID = document.getElementById('accountID').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!accountID) {
+                showToast('Please enter your Account User ID');
+                return;
+            }
+
+            if (!password) {
+                showToast('Please enter your password');
+                return;
+            }
+
+            const localData = localStorage.getItem('betrush_user');
+            if (localData) {
+                try {
+                    const parsed = JSON.parse(localData);
+
+                    if (parsed.accountID === accountID && parsed.password === password) {
+                        localStorage.setItem('betrush_session', accountID);
+                        showToast('Login Successful!');
+
+                        setTimeout(() => {
+                            window.location.href = 'dashboard/index.html';
+                        }, 1000);
+                        return;
+                    } else {
+                        showToast('Incorrect User ID or password');
+                        return;
+                    }
+                } catch (err) {}
+            }
+
+            showToast('Account not found. Register first.');
+        }
+    </script>
+</body>
+
+<!-- Mirrored from betrush.site/login/ by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 03 Oct 2026 14:59:17 GMT -->
+
+</html>

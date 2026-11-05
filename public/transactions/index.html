@@ -1,0 +1,420 @@
+﻿<!-- Mirrored from betrush.site/transactions/ by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 03 Oct 2026 14:59:17 GMT -->
+<meta name='viewport' content='width=device-width, initial-scale=1' />
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Outfit:wght@400;600;800;900&amp;display=swap" rel="stylesheet">
+    <title>Transaction History - CrashGame</title>
+    <style>
+         :root {
+            --bg-base: #0b0e14;
+            --bg-surface: #131924;
+            --bg-card: #1a2232;
+            --bg-input: #0e131d;
+            --accent-cyan: #00f2fe;
+            --accent-blue: #4facfe;
+            --accent-green: #10b981;
+            --accent-glow: rgba(0, 242, 254, 0.35);
+            --text-main: #f8fafc;
+            --text-muted: #8492a6;
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(0, 242, 254, 0.5);
+            --error-red: #ef4444;
+            --warning-orange: #f59e0b;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background: rgba(19, 25, 36, 0.85);
+            backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .back-link {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 900;
+            color: #fff;
+            text-decoration: none;
+        }
+        
+        .nav-logo img {
+            height: 32px;
+            filter: drop-shadow(0 0 8px var(--accent-glow));
+        }
+        
+        .main-wrapper {
+            flex: 1;
+            padding: 24px 16px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 680px;
+            width: 100%;
+        }
+        
+        .page-header {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .page-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        /* FILTER TABS */
+        
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            background: var(--bg-surface);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid var(--border-glass);
+            margin-bottom: 20px;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 8px 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: color 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .tab-btn.active {
+            background: var(--bg-card);
+            color: var(--accent-cyan);
+            border: 1px solid var(--border-glass);
+        }
+        /* TRANSACTION LIST & SMOOTH TRANSITIONS */
+        
+        .tx-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .tx-list.switching {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+        
+        .tx-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-glass);
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .tx-card:hover {
+            border-color: var(--border-active);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tx-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .tx-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .tx-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .tx-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+        }
+        
+        .tx-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        
+        .tx-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+        
+        .tx-amount {
+            font-size: 15px;
+            font-weight: 800;
+        }
+        
+        .tx-amount.withdrawal {
+            color: var(--text-main);
+        }
+        
+        .tx-amount.deposit {
+            color: var(--accent-green);
+        }
+        
+        .status-badge {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+        }
+        
+        .status-badge.processing {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning-orange);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        
+        .status-badge.completed {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        /* EMPTY STATE WITH DISAPPOINTED DOLL */
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            background: var(--bg-surface);
+            border: 1px dashed var(--border-glass);
+            border-radius: 16px;
+            color: var(--text-muted);
+            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+        
+        .empty-doll-svg {
+            width: 100px;
+            height: 100px;
+            opacity: 0.6;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+            animation: floatSad 4s ease-in-out infinite;
+        }
+        
+        @keyframes floatSad {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 12px;
+            border-top: 1px solid var(--border-glass);
+            background: var(--bg-base);
+            margin-top: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <a href="../withdrawal/index.html" class="back-link">&larr; Back</a>
+        <a href="../dashboard/index-2.html" class="nav-logo">
+            <img src="../../i.ibb.co/5WS8kMsY/4-F05-AFF4-AFC8-4-B60-9-F59-086-D08-FA8723.png" alt="CrashGame" /> CrashGame
+        </a>
+        <div style="width: 50px;"></div>
+    </header>
+
+    <div class="main-wrapper">
+        <div class="container">
+            <div class="page-header">
+                <h2>Transactions</h2>
+            </div>
+
+            <!-- TABS -->
+            <div class="filter-tabs">
+                <button class="tab-btn active" onclick="filterTx('all', this)">All</button>
+                <button class="tab-btn" onclick="filterTx('Withdrawal', this)">Withdrawals</button>
+                <button class="tab-btn" onclick="filterTx('Deposit', this)">Deposits</button>
+            </div>
+
+            <!-- LIST -->
+            <div class="tx-list" id="txContainer">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 CrashGame Global. All rights reserved.
+    </footer>
+
+    <script>
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTransactions();
+        });
+
+        function filterTx(type, btn) {
+            if (currentFilter === type) return;
+
+            currentFilter = type;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const container = document.getElementById('txContainer');
+
+            // Smooth 0.3s transition on tab switch
+            container.classList.add('switching');
+            setTimeout(() => {
+                renderTransactions();
+                container.classList.remove('switching');
+            }, 300);
+        }
+
+        function renderTransactions() {
+            const container = document.getElementById('txContainer');
+            let data = JSON.parse(localStorage.getItem('betrush_transactions') || '[]');
+
+            if (currentFilter !== 'all') {
+                data = data.filter(item => item.type === currentFilter);
+            }
+
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg class="empty-doll-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Antenna -->
+                            <line x1="60" y1="20" x2="60" y2="32" stroke="#8492a6" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="60" cy="16" r="4" fill="#8492a6"/>
+                            
+                            <!-- Head Base -->
+                            <rect x="25" y="32" width="70" height="52" rx="16" fill="#131924" stroke="#8492a6" stroke-width="2.5"/>
+                            
+                            <!-- Screen/Face Area -->
+                            <rect x="32" y="39" width="56" height="38" rx="10" fill="#0e131d" stroke="rgba(255,255,255,0.05)" stroke-width="1.5"/>
+                            
+                            <!-- Disappointed Sad Eyes (Slightly Angled Downward Lines) -->
+                            <path d="M 42 51 L 52 56" stroke="#8492a6" stroke-width="3" stroke-linecap="round"/>
+                            <path d="M 78 51 L 68 56" stroke="#8492a6" stroke-width="3" stroke-linecap="round"/>
+                            
+                            <!-- Disappointed Frown Mouth -->
+                            <path d="M 52 68 Q 60 62 68 68" stroke="#8492a6" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                            
+                            <!-- Tears / Droplet detail for extra character -->
+                            <path d="M 44 60 C 44 62 42.5 64 42.5 64 C 42.5 64 41 62 41 60 C 41 59 42 58 42.5 58 C 43 58 44 59 44 60 Z" fill="#8492a6" opacity="0.6"/>
+
+                            <!-- Body shoulders -->
+                            <path d="M 35 84 C 35 84 45 96 60 96 C 75 96 85 84 85 84" stroke="#8492a6" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                        </svg>
+                        <div>No ${currentFilter === 'all' ? '' : currentFilter.toLowerCase()} transactions recorded yet.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = data.map(tx => {
+                const isWithdrawal = tx.type === 'Withdrawal';
+                const icon = isWithdrawal ? '↗️' : '↘️';
+                const amtClass = isWithdrawal ? 'withdrawal' : 'deposit';
+
+                return `
+                    <div class="tx-card">
+                        <div class="tx-left">
+                            <div class="tx-icon">${icon}</div>
+                            <div class="tx-info">
+                                <span class="tx-title">${tx.methodTitle || tx.type}</span>
+                                <span class="tx-meta">${tx.date} • ID: ${tx.id || 'N/A'}</span>
+                            </div>
+                        </div>
+                        <div class="tx-right">
+                            <span class="tx-amount ${amtClass}">${tx.amount}</span>
+                            <span class="status-badge ${(tx.status || 'Processing').toLowerCase()}">${tx.status || 'Processing'}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+
+<!-- Mirrored from betrush.site/transactions/ by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 03 Oct 2026 14:59:17 GMT -->
+
+</html>

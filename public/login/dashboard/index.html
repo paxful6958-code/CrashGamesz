@@ -1,0 +1,2226 @@
+<meta name='viewport' content='width=device-width, initial-scale=1' />
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>CrashGame -- Gaming Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet" />
+
+    <style>
+         :root {
+            --bg-base: #0b0e14;
+            --bg-surface: #131924;
+            --bg-card: #1a2232;
+            --bg-input: #0e131d;
+            --accent-cyan: #00f2fe;
+            --accent-blue: #4facfe;
+            --accent-green: #10b981;
+            --accent-glow: rgba(0, 242, 254, 0.35);
+            --text-main: #f8fafc;
+            --text-muted: #8492a6;
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(0, 242, 254, 0.5);
+            --error-red: #ef4444;
+            --amber-highlight: rgba(245, 158, 11, 0.2);
+            --amber-border: rgba(245, 158, 11, 0.4);
+            --amber-text: #fbbf24;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        
+        html,
+        body {
+            overflow: hidden;
+            height: 100%;
+            height: 100dvh;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+        
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            touch-action: pan-y;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        .no-select {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        /* Ticker Bar */
+        
+        .ticker-bar {
+            background: #070a0f;
+            border-bottom: 1px solid var(--border-glass);
+            height: 38px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            font-size: 12px;
+            white-space: nowrap;
+            position: relative;
+            z-index: 20;
+            width: 100%;
+            flex-shrink: 0;
+        }
+        
+        .ticker-wrap {
+            display: flex;
+            gap: 40px;
+            animation: ticker 65s linear infinite;
+        }
+        
+        .ticker-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+        }
+        
+        .ticker-item strong {
+            color: var(--accent-cyan);
+        }
+        
+        .ticker-item span.win-val {
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+        
+        .ticker-item span.action-val {
+            color: #38bdf8;
+            font-weight: 700;
+        }
+        
+        @keyframes ticker {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        /* HEADER */
+        
+        header {
+            background: rgba(19, 25, 36, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 14px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 900;
+            color: #fff;
+            text-decoration: none;
+        }
+        
+        .nav-logo img {
+            height: 40px;
+            width: auto;
+            filter: drop-shadow(0 0 10px var(--accent-glow));
+            object-fit: contain;
+        }
+        
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .balance-pill {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--accent-green);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.3px;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.12);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .balance-pill:hover {
+            transform: translateY(-1px);
+            border-color: rgba(0, 242, 254, 0.6);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        
+        .balance-pill span {
+            color: #ffffff;
+            font-weight: 800;
+        }
+        
+        .btn-deposit-quick {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: #050811;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s, filter 0.2s;
+        }
+        
+        .btn-deposit-quick:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.1);
+        }
+        
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 10px;
+            transition: background 0.2s;
+            background: var(--bg-input);
+            border: 1px solid var(--border-glass);
+        }
+        
+        .hamburger:hover {
+            background: var(--bg-card);
+        }
+        
+        .hamburger span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: var(--text-main);
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+        /* MENU OVERLAY & PANEL */
+        
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            height: 100dvh;
+            background: rgba(7, 10, 15, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 999;
+            display: flex;
+            justify-content: flex-end;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.28s ease, visibility 0.28s ease;
+        }
+        
+        .menu-overlay.open {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .menu-panel {
+            width: min(390px, 88vw);
+            height: 100%;
+            background: var(--bg-surface);
+            border-left: 1px solid var(--border-glass);
+            box-shadow: -30px 0 80px rgba(0, 0, 0, 0.85);
+            padding: max(24px, env(safe-area-inset-top)) 22px max(24px, env(safe-area-inset-bottom));
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.38s cubic-bezier(.22, .61, .36, 1);
+            overflow-y: auto;
+        }
+        
+        .menu-overlay.open .menu-panel {
+            transform: translateX(0);
+        }
+        
+        .menu-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+        
+        .menu-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .menu-brand-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .menu-brand-icon img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+        
+        .menu-brand-title {
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+        }
+        
+        .menu-brand-subtitle {
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .close-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            border: 1px solid var(--border-glass);
+            background: var(--bg-input);
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease, transform 0.2s ease;
+            flex-shrink: 0;
+        }
+        
+        .close-btn:hover {
+            background: var(--bg-card);
+        }
+        
+        .close-btn span {
+            position: absolute;
+            width: 16px;
+            height: 2px;
+            background: var(--text-muted);
+            border-radius: 10px;
+        }
+        
+        .close-btn span:first-child {
+            transform: rotate(45deg);
+        }
+        
+        .close-btn span:last-child {
+            transform: rotate(-45deg);
+        }
+        
+        .menu-account {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 15px;
+            margin-bottom: 24px;
+            border-radius: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+        }
+        
+        .account-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid var(--border-active);
+            color: var(--accent-cyan);
+            flex-shrink: 0;
+        }
+        
+        .account-avatar svg {
+            width: 22px;
+            height: 22px;
+        }
+        
+        .account-name {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 800;
+        }
+        
+        .account-balance {
+            margin-top: 2px;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .account-balance strong {
+            color: var(--accent-green);
+            font-weight: 800;
+        }
+        
+        .menu-label {
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            padding-left: 4px;
+        }
+        
+        .menu-navigation {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            text-decoration: none;
+            color: var(--text-main);
+            border: 1px solid transparent;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .menu-item:hover {
+            background: var(--bg-card);
+            border-color: var(--border-glass);
+            transform: translateX(3px);
+        }
+        
+        .menu-item.active {
+            background: rgba(0, 242, 254, 0.08);
+            border-color: var(--border-active);
+        }
+        
+        .menu-item-icon {
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: var(--bg-input);
+            color: var(--text-muted);
+            border: 1px solid var(--border-glass);
+        }
+        
+        .menu-item.active .menu-item-icon {
+            color: var(--accent-cyan);
+            background: rgba(0, 242, 254, 0.12);
+            border-color: var(--border-active);
+        }
+        
+        .menu-item-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .deposit-icon {
+            color: var(--accent-green);
+        }
+        
+        .withdrawal-icon {
+            color: #f59e0b;
+        }
+        
+        .contact-icon {
+            color: var(--accent-blue);
+        }
+        
+        .faq-icon {
+            color: var(--accent-cyan);
+        }
+        
+        .menu-item-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+        }
+        
+        .menu-item-text strong {
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        
+        .menu-item-text span {
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 600;
+        }
+        
+        .menu-arrow {
+            color: var(--text-muted);
+            font-size: 20px;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        
+        .menu-item:hover .menu-arrow {
+            color: var(--accent-cyan);
+            transform: translateX(3px);
+        }
+        
+        .menu-bottom {
+            margin-top: auto;
+            padding-top: 25px;
+        }
+        
+        .logout-button {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            background: rgba(239, 68, 68, 0.08);
+            color: #f87171;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+        
+        .logout-button:hover {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.35);
+        }
+        
+        .logout-icon {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: rgba(239, 68, 68, 0.12);
+            flex-shrink: 0;
+        }
+        
+        .logout-icon svg {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .menu-version {
+            text-align: center;
+            margin-top: 16px;
+            color: var(--text-muted);
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        /* MAIN CONTENT & GAME GRID - SCROLLABLE */
+        
+        .main-scrollable {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
+        }
+        
+        .container {
+            max-width: 1280px;
+            margin: 20px auto 40px;
+            padding: 0 28px;
+            width: 100%;
+        }
+        
+        .section-header {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--accent-cyan);
+            border-radius: 4px;
+            box-shadow: 0 0 12px var(--accent-cyan);
+        }
+        
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 24px;
+        }
+        
+        .game-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-glass);
+            border-radius: 18px;
+            overflow: hidden;
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .game-card.active-game {
+            cursor: pointer;
+            border-color: rgba(0, 242, 254, 0.2);
+        }
+        
+        .game-card.active-game:hover {
+            transform: translateY(-6px);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 20px var(--accent-glow);
+        }
+        
+        .game-thumbnail {
+            width: 100%;
+            aspect-ratio: 235 / 320;
+            background: var(--bg-input);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .game-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        
+        .game-card.active-game:hover .game-thumbnail img {
+            transform: scale(1.05);
+        }
+        
+        .game-info {
+            padding: 14px 16px;
+            background: var(--bg-surface);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            border-top: 1px solid var(--border-glass);
+        }
+        
+        .game-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        .game-status-tag {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        
+        .tag-live {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+        
+        .game-card.locked {
+            opacity: 0.65;
+            cursor: not-allowed;
+            border-color: rgba(239, 68, 68, 0.15);
+        }
+        
+        .game-card.locked:hover {
+            transform: none;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+        
+        .tag-locked {
+            background: rgba(239, 68, 68, 0.12);
+            color: var(--error-red);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+        /* Toast Notifications */
+        
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border-active);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            font-size: 13px;
+            animation: fadeIn 0.3s forwards;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* FOOTER */
+        
+        footer {
+            text-align: center;
+            padding: 24px;
+            color: var(--text-muted);
+            font-size: 12px;
+            border-top: 1px solid var(--border-glass);
+            background: var(--bg-base);
+            flex-shrink: 0;
+        }
+        /* BALANCE POPUP MODAL */
+        
+        .balance-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 100dvh;
+            background: rgba(7, 10, 15, 0.75);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+            overflow-y: auto;
+        }
+        
+        .balance-modal-overlay.open {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .balance-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-active);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 242, 254, 0.2);
+            border-radius: 20px;
+            width: min(380px, 92vw);
+            padding: 24px;
+            position: relative;
+            transform: scale(0.92);
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            margin: auto;
+        }
+        
+        .balance-modal-overlay.open .balance-card {
+            transform: scale(1);
+        }
+        
+        .balance-modal-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--text-muted);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .balance-modal-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--accent-green);
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .balance-modal-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .balance-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 800;
+            text-decoration: none;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+        
+        .balance-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .balance-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+        
+        .btn-modal-deposit {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
+            border: 1px solid rgba(16, 185, 129, 0.5);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        }
+        
+        .btn-modal-withdraw {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: #050811;
+            border: 1px solid rgba(0, 242, 254, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.2);
+        }
+        
+        .balance-modal-footer-note {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        /* FAQ DOCUMENT MODAL */
+        
+        .faq-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 100dvh;
+            background: rgba(7, 10, 15, 0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            z-index: 2500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: max(20px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom));
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.28s ease, visibility 0.28s ease;
+            overflow-y: auto;
+        }
+        
+        .faq-modal-overlay.open {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .faq-document-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-glass);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 242, 254, 0.15);
+            border-radius: 20px;
+            width: min(680px, 96vw);
+            max-height: calc(100dvh - max(32px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+            margin: auto;
+        }
+        
+        .faq-modal-overlay.open .faq-document-card {
+            transform: scale(1);
+        }
+        
+        .faq-doc-header {
+            padding: 18px 22px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+        
+        .faq-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .faq-brand-logo {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px var(--accent-glow));
+        }
+        
+        .faq-title-area h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1.2;
+        }
+        
+        .faq-status-badge {
+            font-size: 9px;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid var(--border-active);
+            padding: 2px 8px;
+            border-radius: 12px;
+            letter-spacing: 0.5px;
+        }
+        
+        .faq-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+        
+        .faq-body-scrollable {
+            padding: 20px 22px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            touch-action: pan-y;
+        }
+        
+        .faq-category-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .faq-category-title {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding-left: 2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .faq-category-title::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            box-shadow: 0 0 8px var(--accent-cyan);
+        }
+        
+        .faq-accordion-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+        
+        .faq-accordion-item.active {
+            border-color: var(--border-active);
+            background: rgba(26, 34, 50, 0.95);
+        }
+        
+        .faq-accordion-header {
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            gap: 10px;
+            user-select: none;
+        }
+        
+        .faq-question {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.4;
+        }
+        
+        .faq-toggle-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+            transition: transform 0.25s ease, color 0.25s ease, background 0.25s ease;
+        }
+        
+        .faq-accordion-item.active .faq-toggle-icon {
+            transform: rotate(180deg);
+            color: var(--accent-cyan);
+            background: rgba(0, 242, 254, 0.1);
+            border-color: var(--border-active);
+        }
+        
+        .faq-accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0, 1, 0, 1), padding 0.3s ease;
+            padding: 0 14px;
+        }
+        
+        .faq-accordion-item.active .faq-accordion-body {
+            max-height: 500px;
+            padding: 0 14px 14px 14px;
+            transition: max-height 0.3s cubic-bezier(0.5, 0, 0.1, 1), padding 0.3s ease;
+        }
+        
+        .faq-answer {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            border-top: 1px dashed var(--border-glass);
+            padding-top: 10px;
+        }
+        /* Highlighted Info Card */
+        
+        .faq-important-card {
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid var(--amber-border);
+            border-radius: 14px;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .faq-important-head {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--amber-text);
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .faq-important-head svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+        
+        .faq-important-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .faq-important-list li {
+            font-size: 11px;
+            color: #e2e8f0;
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+        
+        .faq-important-list li::before {
+            content: "•";
+            color: var(--amber-text);
+            font-weight: bold;
+        }
+        
+        .faq-doc-footer-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        
+        .faq-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 12.5px;
+            font-weight: 800;
+            text-decoration: none;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+        
+        .faq-action-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .faq-action-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+        
+        .faq-btn-support {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: #050811;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.2);
+        }
+        
+        .faq-btn-telegram {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+        }
+        
+        .faq-doc-copyright {
+            text-align: center;
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        /* RESPONSIVE BREAKPOINTS */
+        
+        @media (max-width: 820px) {
+            .game-grid {
+                gap: 16px;
+            }
+            header {
+                padding: 12px 20px;
+            }
+            .container {
+                padding: 0 16px;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .game-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 10px;
+            }
+            .container {
+                padding: 0 10px;
+            }
+            .nav-logo {
+                font-size: 18px;
+            }
+            .nav-logo img {
+                height: 32px;
+            }
+            .balance-pill {
+                font-size: 11px;
+                padding: 6px 12px;
+            }
+            .btn-deposit-quick {
+                display: none;
+            }
+            .game-info {
+                padding: 10px;
+            }
+            .game-name {
+                font-size: 12px;
+            }
+            .game-status-tag {
+                font-size: 8px;
+                padding: 3px 6px;
+            }
+            .faq-doc-header {
+                padding: 14px 16px;
+            }
+            .faq-body-scrollable {
+                padding: 16px;
+            }
+            .faq-question {
+                font-size: 11.5px;
+            }
+            .faq-answer {
+                font-size: 10.5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TICKER BAR -->
+    <div class="ticker-bar">
+        <div class="ticker-wrap" id="tickerWrap"></div>
+    </div>
+
+    <header>
+        <div class="nav-left">
+            <a href="javascript:void(0)" class="nav-logo">
+                <img src="https://i.ibb.co/5WS8kMsY/4-F05-AFF4-AFC8-4-B60-9-F59-086-D08-FA8723.png" alt="CrashGame" /> CrashGame
+            </a>
+        </div>
+
+        <div class="nav-right">
+            <!-- Clickable Balance Pill -->
+            <div class="balance-pill" id="balancePillBtn" onclick="openBalancePopup()" aria-label="Open balance management">
+                <span id="userBalanceDisplay">0.00</span>
+            </div>
+            <a href="/deposit/" class="btn-deposit-quick">+ DEPOSIT</a>
+            <div class="hamburger" id="hamburgerBtn" aria-label="Open menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <div class="menu-overlay" id="menuOverlay">
+        <div class="menu-panel">
+            <div class="menu-top">
+                <div class="menu-brand">
+                    <div class="menu-brand-icon">
+                        <img src="https://i.ibb.co/5WS8kMsY/4-F05-AFF4-AFC8-4-B60-9-F59-086-D08-FA8723.png" alt="CrashGame" />
+                    </div>
+                    <div>
+                        <div class="menu-brand-title">CrashGame</div>
+                        <div class="menu-brand-subtitle">Gaming Terminal</div>
+                    </div>
+                </div>
+                <button class="close-btn" id="closeMenuBtn" aria-label="Close menu">
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+
+            <div class="menu-account">
+                <div class="account-avatar">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M20 21V19C20 16.7909 18.2091 15 16 15H8C5.79086 15 4 16.7909 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/></svg>
+                </div>
+                <div class="account-details">
+                    <div class="account-name" id="menuAccountName">Loading...</div>
+                    <div class="account-balance">
+                        Balance: <strong id="menuBalance">0.00</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-label">MENU</div>
+
+            <nav class="menu-navigation">
+                <a href="javascript:void(0)" onclick="closeMenu()" class="menu-item active">
+                    <div class="menu-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M3 11.5L12 4L21 11.5V20H14.5V14H9.5V20H3V11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div class="menu-item-text">
+                        <strong>Home</strong>
+                        <span>Game lobby</span>
+                    </div>
+                    <div class="menu-arrow">›</div>
+                </a>
+
+                <a href="/deposit/" class="menu-item">
+                    <div class="menu-item-icon deposit-icon">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3V16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7 11L12 16L17 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 21H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    </div>
+                    <div class="menu-item-text">
+                        <strong>Deposit</strong>
+                        <span>Add funds to balance</span>
+                    </div>
+                    <div class="menu-arrow">›</div>
+                </a>
+
+                <a href="/withdrawal/" class="menu-item">
+                    <div class="menu-item-icon withdrawal-icon">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M12 21V8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7 13L12 8L17 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 3H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    </div>
+                    <div class="menu-item-text">
+                        <strong>Withdrawal</strong>
+                        <span>Cash out earnings</span>
+                    </div>
+                    <div class="menu-arrow">›</div>
+                </a>
+
+                <a href="https://t.me/OddsXDepositHelp" target="_blank" class="menu-item">
+                    <div class="menu-item-icon contact-icon">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5C4 4.67 4.67 4 5.5 4H18.5C19.33 4 20 4.67 20 5.5V15.5C20 16.33 19.33 17 18.5 17H12L7 20V17H5.5C4.67 17 4 16.33 4 15.5V5.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div class="menu-item-text">
+                        <strong>Contact Support</strong>
+                        <span>24/7 Live Assistance</span>
+                    </div>
+                    <div class="menu-arrow">›</div>
+                </a>
+
+                <!-- FAQ Menu Option -->
+                <a href="javascript:void(0)" onclick="openFAQ()" class="menu-item">
+                    <div class="menu-item-icon faq-icon">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2V8H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 13H8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16 17H8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M10 9H8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                    </div>
+                    <div class="menu-item-text">
+                        <strong>FAQ</strong>
+                        <span>Help & Important Information</span>
+                    </div>
+                    <div class="menu-arrow">›</div>
+                </a>
+            </nav>
+
+            <div class="menu-bottom">
+                <button class="logout-button" onclick="logout()">
+                    <div class="logout-icon">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M10 4H5.5C4.67 4 4 4.67 4 5.5V18.5C4 19.33 4.67 20 5.5 20H10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M14 8L18 12L14 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 12H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                    </div>
+                    <span>Logout Session</span>
+                </button>
+                <div class="menu-version">CrashGame v2.0 • Secured Terminal</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN SCROLLABLE CONTENT -->
+    <div class="main-scrollable" id="mainScrollable">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-title">Featured Games</div>
+            </div>
+
+            <div class="game-grid" id="gameGrid">
+                <div class="game-card active-game" onclick="window.location.href='/aviator/'">
+                    <div class="game-thumbnail">
+                        <img src="https://1win.com/resources/v1/optimizeimages/unsafe/casino_game_card_x1/plain/https://v1.bundlecdn.com/casino-images/v/a6816c7c-cb6f-4a0a-9e64-53730427d071_vertical.png@webp" alt="Aviator" />
+                    </div>
+                    <div class="game-info">
+                        <span class="game-name">Aviator</span>
+                        <span class="game-status-tag tag-live">LIVE</span>
+                    </div>
+                </div>
+
+                <div class="game-card locked" onclick="lockedGame('Mines')">
+                    <div class="game-thumbnail">
+                        <img src="https://i.ibb.co/JFSwNty5/IMG-1089.jpg" alt="Mines" />
+                    </div>
+                    <div class="game-info">
+                        <span class="game-name">Mines</span>
+                        <span class="game-status-tag tag-locked">X</span>
+                    </div>
+                </div>
+
+                <div class="game-card locked" onclick="lockedGame('Lucky Jet')">
+                    <div class="game-thumbnail">
+                        <img src="https://i.ibb.co/V0c684qP/IMG-1088.jpg" alt="Lucky Jet" />
+                    </div>
+                    <div class="game-info">
+                        <span class="game-name">Lucky Jet</span>
+                        <span class="game-status-tag tag-locked">X</span>
+                    </div>
+                </div>
+
+                <div class="game-card locked" onclick="lockedGame('Chicken')">
+                    <div class="game-thumbnail">
+                        <img src="https://i.ibb.co/ychqLzDg/IMG-1092.jpg" alt="Chicken" />
+                    </div>
+                    <div class="game-info">
+                        <span class="game-name">Chicken</span>
+                        <span class="game-status-tag tag-locked">X</span>
+                    </div>
+                </div>
+
+                <div class="game-card locked" onclick="lockedGame('Blackjack')">
+                    <div class="game-thumbnail">
+                        <img src="https://i.ibb.co/mV8pLxtC/IMG-1091.jpg" alt="Blackjack" />
+                    </div>
+                    <div class="game-info">
+                        <span class="game-name">Blackjack</span>
+                        <span class="game-status-tag tag-locked">X</span>
+                    </div>
+                </div>
+
+                <div class="game-card locked" onclick="lockedGame('Penalty')">
+                    <div class="game-thumbnail">
+                        <img src="https://i.ibb.co/hxRxgn3b/IMG-1087.jpg" alt="Penalty" />
+                    </div>
+                    <div class="game-info">
+                        <span class="game-name">Penalty</span>
+                        <span class="game-status-tag tag-locked">X</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BALANCE POPUP MODAL -->
+    <div class="balance-modal-overlay" id="balanceModalOverlay" onclick="closeBalancePopupOnOverlay(event)">
+        <div class="balance-card">
+            <button class="close-btn" onclick="closeBalancePopup()" aria-label="Close balance dialog" style="position: absolute; top: 16px; right: 16px;">
+                <span></span>
+                <span></span>
+            </button>
+            <div class="balance-modal-label">AVAILABLE BALANCE</div>
+            <div class="balance-modal-value" id="modalBalanceDisplay">0.00</div>
+            <div class="balance-modal-actions">
+                <a href="/deposit/" class="balance-btn btn-modal-deposit">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 3V16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7 11L12 16L17 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 21H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>                    Deposit
+                </a>
+                <a href="/withdrawal/" class="balance-btn btn-modal-withdraw">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 21V8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7 13L12 8L17 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 3H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>                    Withdraw
+                </a>
+            </div>
+            <div class="balance-modal-footer-note">Manage your funds securely with CrashGame.</div>
+        </div>
+    </div>
+
+    <!-- FAQ DOCUMENT MODAL -->
+    <div class="faq-modal-overlay" id="faqModalOverlay" onclick="closeFAQOnOverlay(event)">
+        <div class="faq-document-card">
+            <div class="faq-doc-header">
+                <div class="faq-header-left">
+                    <img src="https://i.ibb.co/5WS8kMsY/4-F05-AFF4-AFC8-4-B60-9-F59-086-D08-FA8723.png" alt="BetRush" class="faq-brand-logo" />
+                    <div class="faq-title-area">
+                        <h2>CrashGame<span class="faq-status-badge">● SUPPORT CENTER</span></h2>
+                        <div class="faq-subtitle">Important information about your account, deposits, withdrawals and free signals.</div>
+                    </div>
+                </div>
+                <button class="close-btn" onclick="closeFAQ()" aria-label="Close FAQ dialog">
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+
+            <div class="faq-body-scrollable">
+
+                <!-- GETTING STARTED -->
+                <div class="faq-category-section">
+                    <div class="faq-category-title">GETTING STARTED</div>
+
+                    <div class="faq-accordion-item">
+                        <div class="faq-accordion-header" onclick="toggleFAQ(this)">
+                            <span class="faq-question">What is CrashGame?</span>
+                            <div class="faq-toggle-icon">+</div>
+                        </div>
+                        <div class="faq-accordion-body">
+                            <div class="faq-answer">CrashGame is an online gaming platform providing instant global access to supported games and 100% accurate Aviator signals through a high-performance terminal.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-accordion-item">
+                        <div class="faq-accordion-header" onclick="toggleFAQ(this)">
+                            <span class="faq-question">Which countries can use CrashGame?</span>
+                            <div class="faq-toggle-icon">+</div>
+                        </div>
+                        <div class="faq-accordion-body">
+                            <div class="faq-answer">CrashGame operates globally and works seamlessly in all countries worldwide. Local payment options are available for every supported region by contacting 24/7 Support.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-accordion-item">
+                        <div class="faq-accordion-header" onclick="toggleFAQ(this)">
+                            <span class="faq-question">Do I have to pay for Aviator signals?</span>
+                            <div class="faq-toggle-icon">+</div>
+                        </div>
+                        <div class="faq-accordion-body">
+                            <div class="faq-answer">No. All Aviator signals provided through CrashGame are 100% free to access for all registered users.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-accordion-item">
+                        <div class="faq-accordion-header" onclick="toggleFAQ(this)">
+                            <span class="faq-question">Is there a daily earning or winning limit?</span>
+                            <div class="faq-toggle-icon">+</div>
+                        </div>
+                        <div class="faq-accordion-body">
+                            <div class="faq-answer">No. CrashGame has no maximum earning limits. You can win and accumulate as much as you like without restrictions.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DEPOSITS -->
+                <div class="faq-category-section">
+                    <div class="faq-category-title">DEPOSITS</div>
+
+                    <div class="faq-accordion-item">
+                        <div class="faq-accordion-header" onclick="toggleFAQ(this)">
+                            <span class="faq-question">How do I make a deposit?</span>
+                            <div class="faq-toggle-icon">+</div>
+                        </div>
+                        <div class="faq-accordion-body">
+                            <div class="faq-answer">Navigate to the Deposit section. To complete a local payment or receive regional payment options, contact Support so an administrator can provide exact details for your transaction.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-accordion-item">
+                        <div class="faq-accordion-header" onclick="toggleFAQ(this)">
+                            <span class="faq-question">How quickly do deposits reflect?</span>
+                            <div class="faq-toggle-icon">+</div>
+                        </div>
+                        <div class="faq-accordion-body">
+                            <div class="faq-answer">All deposits reflect immediately in your BetRush balance upon completing payment.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-accordion-item">
+                        <div class="faq-accordion-header" onclick="toggleFAQ(this)">
+                            <span class="faq-question">Why must I contact Support for deposit details?</span>
+                            <div class="faq-toggle-icon">+</div>
+                        </div>
+                        <div class="faq-accordion-body">
+                            <div class="faq-answer">Anyone can use their local payment method by simply contacting Support to get the correct, current deposit details for their specific location.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WITHDRAWALS -->
+                <div class="faq-category-section">
+                    <div class="faq-category-title">WITHDRAWALS</div>
+
+                    <div class="faq-accordion-item">
+                        <div class="faq-accordion-header" onclick="toggleFAQ(this)">
+                            <span class="faq-question">How long do withdrawals take?</span>
+                            <div class="faq-toggle-icon">+</div>
+                        </div>
+                        <div class="faq-accordion-body">
+                            <div class="faq-answer">Withdrawal processing times do not depend on external delays—all cashout payouts are sent exactly in under 10 minutes.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-accordion-item">
+                        <div class="faq-accordion-header" onclick="toggleFAQ(this)">
+                            <span class="faq-question">Is there a minimum or maximum withdrawal limit?</span>
+                            <div class="faq-toggle-icon">+</div>
+                        </div>
+                        <div class="faq-accordion-body">
+                            <div class="faq-answer">No. There is no minimum withdrawal limit and no maximum withdrawal limit. You are free to withdraw any amount from your balance whenever you want.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-accordion-item">
+                        <div class="faq-accordion-header" onclick="toggleFAQ(this)">
+                            <span class="faq-question">Are there any wagering requirements before I can withdraw?</span>
+                            <div class="faq-toggle-icon">+</div>
+                        </div>
+                        <div class="faq-accordion-body">
+                            <div class="faq-answer">No wagering is required. You can withdraw your balance at any time without playing through requirements.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-accordion-item">
+                        <div class="faq-accordion-header" onclick="toggleFAQ(this)">
+                            <span class="faq-question">Are there any withdrawal fees?</span>
+                            <div class="faq-toggle-icon">+</div>
+                        </div>
+                        <div class="faq-accordion-body">
+                            <div class="faq-answer">There are zero withdrawal fees on CrashGame. You get exactly what you request to withdraw without deductions.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AVIATOR SIGNALS -->
+                <div class="faq-category-section">
+                    <div class="faq-category-title">AVIATOR SIGNALS</div>
+
+                    <div class="faq-accordion-item">
+                        <div class="faq-accordion-header" onclick="toggleFAQ(this)">
+                            <span class="faq-question">Are the signals guaranteed to win?</span>
+                            <div class="faq-toggle-icon">+</div>
+                        </div>
+                        <div class="faq-accordion-body">
+                            <div class="faq-answer">Yes. All Aviator signals on CrashGame are 100% correct and offer a guaranteed win rate.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACCOUNT & SECURITY -->
+                <div class="faq-category-section">
+                    <div class="faq-category-title">ACCOUNT & SECURITY</div>
+
+                    <div class="faq-accordion-item">
+                        <div class="faq-accordion-header" onclick="toggleFAQ(this)">
+                            <span class="faq-question">Is KYC required?</span>
+                            <div class="faq-toggle-icon">+</div>
+                        </div>
+                        <div class="faq-accordion-body">
+                            <div class="faq-answer">No KYC verification is needed to use CrashGame, deposit, or withdraw earnings. Account registration gives immediate access to all services.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Highlighted Info Card -->
+                <div class="faq-important-card">
+                    <div class="faq-important-head">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M12 9V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 17.01L12.01 16.99" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2"/></svg>                        IMPORTANT HIGHLIGHTS
+                    </div>
+                    <ul class="faq-important-list">
+                        <li>Deposits reflect immediately after payment.</li>
+                        <li>Withdrawals are guaranteed and sent in less than 10 minutes.</li>
+                        <li>No minimum or maximum limits on withdrawals — cash out any amount.</li>
+                        <li>Zero withdrawal fees — you receive 100% of your payout.</li>
+                        <li>No KYC verification or wagering needed.</li>
+                        <li>Works worldwide in all countries using local payment methods via Support.</li>
+                        <li>All Aviator signals are 100% correct and guaranteed.</li>
+                    </ul>
+                </div>
+
+                <!-- FAQ Footer Buttons -->
+                <div class="faq-doc-footer-actions">
+                    <a href="https://t.me/OddsXDepositHelp" target="_blank" class="faq-action-btn faq-btn-support">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M8 12H8.01M12 12H12.01M16 12H16.01M21 12C21 16.9706 16.9706 21 12 21C10.1287 21 8.38888 20.4132 6.95822 19.4109L3 21L4.5891 17.0418C3.5868 15.6111 3 13.8713 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>                        CONTACT SUPPORT
+                    </a>
+                    <a href="https://t.me/OddsXDepositHelp" id="faqTelegramLink" target="_blank" class="faq-action-btn faq-btn-telegram">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M21.198 2.43 2.2 9.75c-1.298.52-1.29 1.246-.238 1.571l4.877 1.52 11.288-7.12c.533-.324 1.022-.15.62.207L9.4 14.155l-.35 5.25c.516 0 .743-.237 1.032-.516l2.477-2.41 5.152 3.805c.95.524 1.633.253 1.87-.88l3.38-15.908c.346-1.387-.528-2.016-1.763-1.466Z" fill="currentColor"/></svg>                        JOIN TELEGRAM CHANNEL
+                    </a>
+                    <div class="faq-doc-copyright">CrashGame © 2026 Global • Help Center</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <footer>
+        &copy; 2026 CrashGame Global. All rights reserved.
+    </footer>
+
+    <script>
+        // Configurable Constants
+        const BETRUSH_TELEGRAM_CHANNEL = 'https://t.me/OddsXDepositHelp';
+
+        // Set Telegram Link on Load
+        document.addEventListener('DOMContentLoaded', function() {
+            const tgBtn = document.getElementById('faqTelegramLink');
+            if (tgBtn) tgBtn.href = BETRUSH_TELEGRAM_CHANNEL;
+        });
+
+        // Prevent pinch zoom and double-tap zoom
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener('touchmove', function(e) {
+            if (e.target.closest('.main-scrollable') || e.target.closest('.menu-panel') || e.target.closest('.faq-body-scrollable')) {
+                return;
+            }
+            e.preventDefault();
+        }, {
+            passive: false
+        });
+
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // ============================================
+        // DYNAMIC CURRENCY & LOCATION DETECTION SYSTEM
+        // ============================================
+        const COUNTRY_TO_CURRENCY = {
+            ZA: {
+                code: 'ZAR',
+                symbol: 'R'
+            },
+            IN: {
+                code: 'INR',
+                symbol: '₹'
+            },
+            NG: {
+                code: 'NGN',
+                symbol: '₦'
+            },
+            GH: {
+                code: 'GHS',
+                symbol: 'GH₵'
+            },
+            KE: {
+                code: 'KES',
+                symbol: 'KSh'
+            },
+            PK: {
+                code: 'PKR',
+                symbol: 'Rs'
+            },
+            BD: {
+                code: 'BDT',
+                symbol: '৳'
+            },
+            GB: {
+                code: 'GBP',
+                symbol: '£'
+            },
+            US: {
+                code: 'USD',
+                symbol: '$'
+            },
+            CA: {
+                code: 'CAD',
+                symbol: '$'
+            },
+            AU: {
+                code: 'AUD',
+                symbol: '$'
+            },
+            TZ: {
+                code: 'TZS',
+                symbol: 'TSh'
+            },
+            UG: {
+                code: 'UGX',
+                symbol: 'USh'
+            },
+            ZM: {
+                code: 'ZMW',
+                symbol: 'ZK'
+            },
+            MW: {
+                code: 'MWK',
+                symbol: 'MK'
+            },
+            BR: {
+                code: 'BRL',
+                symbol: 'R$'
+            },
+            MX: {
+                code: 'MXN',
+                symbol: '$'
+            },
+            PH: {
+                code: 'PHP',
+                symbol: '₱'
+            },
+            ID: {
+                code: 'IDR',
+                symbol: 'Rp'
+            },
+            VN: {
+                code: 'VND',
+                symbol: '₫'
+            },
+            EG: {
+                code: 'EGP',
+                symbol: 'E£'
+            },
+            FR: {
+                code: 'EUR',
+                symbol: '€'
+            },
+            DE: {
+                code: 'EUR',
+                symbol: '€'
+            },
+            ES: {
+                code: 'EUR',
+                symbol: '€'
+            },
+            IT: {
+                code: 'EUR',
+                symbol: '€'
+            },
+            NL: {
+                code: 'EUR',
+                symbol: '€'
+            }
+        };
+
+        function getBrowserFallbackCurrency() {
+            try {
+                const userLang = navigator.language || 'en-US';
+                const parts = userLang.split('-');
+                if (parts.length > 1) {
+                    const countryCode = parts[parts.length - 1].toUpperCase();
+                    if (COUNTRY_TO_CURRENCY[countryCode]) {
+                        return COUNTRY_TO_CURRENCY[countryCode];
+                    }
+                }
+            } catch (err) {
+                console.warn('Locale check failed:', err);
+            }
+            return {
+                code: 'USD',
+                symbol: '$'
+            };
+        }
+
+        async function detectUserCurrency() {
+            const savedCurrencyCode = localStorage.getItem('betrush_user_currency_code');
+            const savedCurrencySymbol = localStorage.getItem('betrush_user_currency_symbol');
+
+            if (savedCurrencyCode && savedCurrencySymbol) {
+                return {
+                    code: savedCurrencyCode,
+                    symbol: savedCurrencySymbol
+                };
+            }
+
+            try {
+                const res = await fetch('https://ipapi.co/json/', {
+                    timeout: 3000
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.country_code) {
+                        const curInfo = COUNTRY_TO_CURRENCY[data.country_code] || {
+                            code: data.currency || 'USD',
+                            symbol: data.currency_name ? (data.currency || '$') : '$'
+                        };
+                        localStorage.setItem('betrush_user_currency_code', curInfo.code);
+                        localStorage.setItem('betrush_user_currency_symbol', curInfo.symbol);
+                        return curInfo;
+                    }
+                }
+            } catch (e) {
+                console.log('IP API fallback triggered');
+            }
+
+            try {
+                const res2 = await fetch('https://ip-api.com/json/?fields=status,countryCode,currency', {
+                    timeout: 3000
+                });
+                if (res2.ok) {
+                    const data2 = await res2.json();
+                    if (data2 && data2.status === 'success' && data2.countryCode) {
+                        const curInfo = COUNTRY_TO_CURRENCY[data2.countryCode] || {
+                            code: data2.currency || 'USD',
+                            symbol: '$'
+                        };
+                        localStorage.setItem('betrush_user_currency_code', curInfo.code);
+                        localStorage.setItem('betrush_user_currency_symbol', curInfo.symbol);
+                        return curInfo;
+                    }
+                }
+            } catch (e) {
+                console.log('Secondary IP lookup failed');
+            }
+
+            const fallback = getBrowserFallbackCurrency();
+            localStorage.setItem('betrush_user_currency_code', fallback.code);
+            localStorage.setItem('betrush_user_currency_symbol', fallback.symbol);
+            return fallback;
+        }
+
+        function formatCurrencyDisplay(amount, currencyObj) {
+            const num = parseFloat(amount) || 0;
+            return `${num.toFixed(2)} ${currencyObj.code}`;
+        }
+
+        // State Hydration from LocalStorage
+        document.addEventListener('DOMContentLoaded', async function() {
+            const session = localStorage.getItem('betrush_session');
+            const genericData = localStorage.getItem('betrush_user');
+
+            let accountID = '';
+            let rawBalance = 0.00;
+
+            if (genericData) {
+                try {
+                    const user = JSON.parse(genericData);
+                    accountID = user.accountID || '';
+                    rawBalance = user.balance !== undefined ? parseFloat(user.balance) : 0.00;
+                } catch (err) {}
+            }
+
+            if (!accountID && session) {
+                accountID = session;
+            }
+
+            // Redirect to login if user isn't logged in
+            if (!accountID) {
+                window.location.href = '/login/';
+                return;
+            }
+
+            const currencyObj = await detectUserCurrency();
+            const formattedBalance = formatCurrencyDisplay(rawBalance, currencyObj);
+
+            document.getElementById('userBalanceDisplay').textContent = formattedBalance;
+            document.getElementById('modalBalanceDisplay').textContent = formattedBalance;
+            document.getElementById('menuBalance').textContent = formattedBalance;
+            document.getElementById('menuAccountName').textContent = accountID;
+        });
+
+        // Hamburger Slide-Out Drawer Controls
+        const hamburger = document.getElementById('hamburgerBtn');
+        const overlay = document.getElementById('menuOverlay');
+        const closeBtn = document.getElementById('closeMenuBtn');
+
+        function openMenu() {
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        hamburger.addEventListener('click', openMenu);
+        closeBtn.addEventListener('click', closeMenu);
+
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) closeMenu();
+        });
+
+        // Balance Modal Controls
+        function openBalancePopup() {
+            document.getElementById('balanceModalOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeBalancePopup() {
+            document.getElementById('balanceModalOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function closeBalancePopupOnOverlay(e) {
+            if (e.target.id === 'balanceModalOverlay') {
+                closeBalancePopup();
+            }
+        }
+
+        // FAQ Modal Controls
+        function openFAQ() {
+            closeMenu();
+            document.getElementById('faqModalOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeFAQ() {
+            document.getElementById('faqModalOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function closeFAQOnOverlay(e) {
+            if (e.target.id === 'faqModalOverlay') {
+                closeFAQ();
+            }
+        }
+
+        function toggleFAQ(headerElem) {
+            const currentItem = headerElem.closest('.faq-accordion-item');
+            const isActive = currentItem.classList.contains('active');
+
+            // Close all items in accordion
+            document.querySelectorAll('.faq-accordion-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // If it was not active previously, open it
+            if (!isActive) {
+                currentItem.classList.add('active');
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMenu();
+                closeBalancePopup();
+                closeFAQ();
+            }
+        });
+
+        // Toast Feedback System
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerText = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function lockedGame(gameName) {
+            showToast(`${gameName} is currently undergoing maintenance.`);
+        }
+
+        function logout() {
+            localStorage.removeItem('betrush_session');
+            showToast('Logging out...');
+            setTimeout(() => {
+                window.location.href = '/login/';
+            }, 800);
+        }
+
+        // ================================
+        // DYNAMIC GLOBAL ACTIVITY TICKER
+        // ================================
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function generateTickerItems() {
+            const wrap = document.getElementById('tickerWrap');
+
+            const PAYMENT_METHODS = [{
+                name: 'OTT Voucher',
+                symbol: 'R',
+                depositChoices: [200, 250, 300, 350, 400],
+                withdrawalMin: 50,
+                withdrawalMax: 10000,
+                dec: 0
+            }, {
+                name: '1Voucher',
+                symbol: 'R',
+                depositChoices: [200, 250, 300, 350, 400],
+                withdrawalMin: 50,
+                withdrawalMax: 10000,
+                dec: 0
+            }, {
+                name: 'Bank Transfer',
+                symbol: 'R',
+                depositChoices: [200, 250, 300, 350, 400],
+                withdrawalMin: 100,
+                withdrawalMax: 25000,
+                dec: 0
+            }, {
+                name: 'USDT',
+                symbol: '$',
+                depositChoices: [15, 20, 25, 30, 35],
+                withdrawalMin: 5,
+                withdrawalMax: 2500,
+                dec: 2
+            }, {
+                name: 'Bitcoin',
+                symbol: '$',
+                depositChoices: [25, 30, 35, 40, 50],
+                withdrawalMin: 10,
+                withdrawalMax: 5000,
+                dec: 2
+            }, {
+                name: 'Skrill',
+                symbol: '$',
+                depositChoices: [15, 20, 25, 30, 35],
+                withdrawalMin: 5,
+                withdrawalMax: 1500,
+                dec: 2
+            }, {
+                name: 'Airtm',
+                symbol: '$',
+                depositChoices: [15, 20, 25, 30, 35],
+                withdrawalMin: 5,
+                withdrawalMax: 1500,
+                dec: 2
+            }, {
+                name: 'UPI',
+                symbol: '₹',
+                depositChoices: [1800, 2000, 2200, 2500, 3000],
+                withdrawalMin: 500,
+                withdrawalMax: 50000,
+                dec: 0
+            }, {
+                name: 'PhonePe',
+                symbol: '₹',
+                depositChoices: [1800, 2000, 2200, 2500, 3000],
+                withdrawalMin: 500,
+                withdrawalMax: 50000,
+                dec: 0
+            }, {
+                name: 'Paytm',
+                symbol: '₹',
+                depositChoices: [1800, 2000, 2200, 2500, 3000],
+                withdrawalMin: 500,
+                withdrawalMax: 50000,
+                dec: 0
+            }, {
+                name: 'MTN MoMo',
+                symbol: 'GH₵',
+                depositChoices: [300, 350, 400, 450, 500],
+                withdrawalMin: 50,
+                withdrawalMax: 5000,
+                dec: 0
+            }, {
+                name: 'M-Pesa',
+                symbol: 'KSh',
+                depositChoices: [2500, 3000, 3500, 4000],
+                withdrawalMin: 500,
+                withdrawalMax: 30000,
+                dec: 0
+            }, {
+                name: 'Airtel Money',
+                symbol: 'KSh',
+                depositChoices: [2500, 3000, 3500, 4000],
+                withdrawalMin: 500,
+                withdrawalMax: 30000,
+                dec: 0
+            }, {
+                name: 'OPay',
+                symbol: '₦',
+                depositChoices: [30000, 35000, 40000, 45000, 50000],
+                withdrawalMin: 2000,
+                withdrawalMax: 300000,
+                dec: 0
+            }, {
+                name: 'JazzCash',
+                symbol: 'Rs',
+                depositChoices: [5500, 6000, 6500, 7000, 8000],
+                withdrawalMin: 1000,
+                withdrawalMax: 80000,
+                dec: 0
+            }, {
+                name: 'Easypaisa',
+                symbol: 'Rs',
+                depositChoices: [5500, 6000, 6500, 7000, 8000],
+                withdrawalMin: 1000,
+                withdrawalMax: 80000,
+                dec: 0
+            }, {
+                name: 'bKash',
+                symbol: '৳',
+                depositChoices: [2500, 3000, 3500, 4000],
+                withdrawalMin: 500,
+                withdrawalMax: 40000,
+                dec: 0
+            }, {
+                name: 'Nagad',
+                symbol: '৳',
+                depositChoices: [2500, 3000, 3500, 4000],
+                withdrawalMin: 500,
+                withdrawalMax: 40000,
+                dec: 0
+            }];
+
+            let items = '';
+            for (let i = 0; i < 18; i++) {
+                const userId = 'User ID ' + getRandomInt(100, 999) + '***';
+                const eventCategory = getRandomInt(1, 3);
+
+                if (eventCategory === 1) {
+                    const winAmt = (Math.random() * (850 - 10) + 10).toFixed(2);
+                    items += `
+                        <div class="ticker-item">
+                            <span>${userId}</span>
+                            won
+                            <span class="win-val">$${winAmt}</span>
+                            in
+                            <strong>Aviator</strong>
+                        </div>
+                    `;
+                } else {
+                    const methodObj = PAYMENT_METHODS[getRandomInt(0, PAYMENT_METHODS.length - 1)];
+                    let amountStr = '';
+
+                    if (eventCategory === 2) {
+                        const depVal = methodObj.depositChoices[getRandomInt(0, methodObj.depositChoices.length - 1)];
+                        const formattedDep = methodObj.dec === 2 ? depVal.toFixed(2) : depVal.toLocaleString();
+                        amountStr = `${methodObj.symbol}${formattedDep}`;
+
+                        items += `
+                            <div class="ticker-item">
+                                <span>${userId}</span>
+                                deposited
+                                <span class="action-val">${amountStr}</span>
+                                via
+                                <strong>${methodObj.name}</strong>
+                            </div>
+                        `;
+                    } else {
+                        const rawWith = methodObj.dec === 2 ?
+                            (Math.random() * (methodObj.withdrawalMax - methodObj.withdrawalMin) + methodObj.withdrawalMin).toFixed(2) :
+                            getRandomInt(methodObj.withdrawalMin, methodObj.withdrawalMax).toLocaleString();
+                        amountStr = `${methodObj.symbol}${rawWith}`;
+
+                        items += `
+                            <div class="ticker-item">
+                                <span>${userId}</span>
+                                withdrew
+                                <span class="win-val">${amountStr}</span>
+                                via
+                                <strong>${methodObj.name}</strong>
+                            </div>
+                        `;
+                    }
+                }
+            }
+            wrap.innerHTML = items + items;
+        }
+
+        document.addEventListener('DOMContentLoaded', generateTickerItems);
+    </script>
+</body>
+
+</html>
